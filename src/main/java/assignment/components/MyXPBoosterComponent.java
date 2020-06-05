@@ -14,7 +14,7 @@ public class MyXPBoosterComponent extends Component {
 
     private void onGiveXP(GiveXpEvent e) {
         if(e.getSkill() == Skill.CONSTRUCTION){
-            
+
         }
         else{
 
