@@ -12,9 +12,7 @@ import java.util.Map;
 
 public class ChartComponent extends Component {
     private static final int XP_STEP = 50;
-
     private Map<Player, PlayerStats> persistence;
-
     public ChartComponent() {
         persistence = new HashMap<>();
     }
@@ -41,7 +39,6 @@ public class ChartComponent extends Component {
     private int getLevelFromXp(int xp) {
         return 1 + Math.floorDiv(xp, XP_STEP);
     }
-
     private PlayerStats getStats(Player player) {
         return persistence.computeIfAbsent(player, p -> new PlayerStats());
     }

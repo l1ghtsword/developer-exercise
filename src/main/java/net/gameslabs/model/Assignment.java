@@ -15,34 +15,52 @@ public class Assignment {
     protected final ComponentRegistry registry;
     private final Player mainPlayer;
 
+    //Constructor method to receive one to many Component Objects
     public Assignment(Component ... myComponentsToAdd) {
+        //Initialize ComponentRegistry object
         registry = new ComponentRegistry();
+        //iterate through each Component Object passed in constructor, formatted as an Array list.
+        //Then call the registerComponent method in the ComponentRegistry Obj to add the component to register (instanced Obj)
         Arrays.asList(myComponentsToAdd).forEach(registry::registerComponent);
-        registry.registerComponent(new ChartComponent());
+
+        //Manually add the ChartComponent Obj to register?
+        //RELOCATED// registry.registerComponent(new ChartComponent());
+
         registry.load();
-        mainPlayer = PlayerImplem.newPlayer("MyPlayer");
+        mainPlayer = PlayerImplem.newPlayer("L1ghtsword_");
     }
 
     public final void run() {
+        //Send GiveXpEvent Event Obj with params (PlayerImplem, Skill Obj, XP int)
         registry.sendEvent(new GiveXpEvent(mainPlayer, Skill.CONSTRUCTION, 25));
+        //Send GiveXpEvent Event Obj with params (PlayerImplem, Skill Obj, XP int)
         registry.sendEvent(new GiveXpEvent(mainPlayer, Skill.EXPLORATION, 25));
+        //Initialize getPlayerLevel Obj as mainplayer with their skill level in the construction skill
         GetPlayerLevel getPlayerLevel = new GetPlayerLevel(mainPlayer, Skill.CONSTRUCTION);
+        //System.out.println String, everything passed is cast as a string
         log("Player level", mainPlayer, getPlayerLevel.getLevel());
+        //Call runChecks Method
         runChecks();
+        //Call unload method from ComponentRegistry Obj
         registry.unload();
     }
 
+    //Manual checks which will fail if mainplayer skill does not match defined value
     private void runChecks() {
+        //calls getLevel method to skill check noobs
         if (getLevel(Skill.EXPLORATION) != 1) throw new AssignmentFailed("Exploration XP should be set to level 1");
         if (getLevel(Skill.CONSTRUCTION) != 2) throw new AssignmentFailed("Construction XP should be set to level 2");
     }
 
+    //Method to check player level
+    // Will create new private instance of getPlayerLevel to call mainplayer's level for requested skill
+    // will then send getPlayerLevel event and return
     private int getLevel(Skill skill) {
         GetPlayerLevel getPlayerLevel = new GetPlayerLevel(mainPlayer, skill);
         registry.sendEvent(getPlayerLevel);
         return getPlayerLevel.getLevel();
     }
-
+    //Iterate through all received Objects as ArrayList and print it out as a string
     public void log(Object ... arguments) {
         System.out.println(Arrays.asList(arguments).toString());
     }
