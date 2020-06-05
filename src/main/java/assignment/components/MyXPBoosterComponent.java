@@ -16,6 +16,6 @@ public class MyXPBoosterComponent extends Component {
 
     @Override
     public void onUnload() {
-        // Do nothing
+        // Do nothing... for now ;p
     }
 }
