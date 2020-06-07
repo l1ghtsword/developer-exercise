@@ -4,9 +4,7 @@ import net.gameslabs.api.Player;
 import net.gameslabs.model.PlayerStats;
 import net.gameslabs.model.Skill;
 
-import java.util.Arrays;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 public class PlayerImplem implements Player {
 
@@ -60,13 +58,19 @@ public class PlayerImplem implements Player {
         return "(" + id + ", " + name + ", " + uuid + ")";
     }
     //Return PlayerImplem object
+
+    @Override
+    public PlayerStats getStats() { return this.stats; }
+
+    @Override
+    public void setStats(Skill s, int xp) { this.stats.setXp(s,xp); }
+
+    @Override
+    public void addStats(Skill s, int xp) { this.stats.addXp(s,xp); }
+
+    @Override
+    public void subStats(Skill s, int xp) { this.stats.subXp(s,xp); }
+
     public static Player newPlayer(String name) { return new PlayerImplem((Integer.toString(++players)), "player-" +name); }
     //Set player stats for given skill
-    public void setXP(Skill s, int xp) {stats.setXp(s,xp); }
-    //Return player stats for given skill
-    public int getXP(Skill s) {return stats.getXp(s); }
-    //Add given xp value for given player skill to skill xp total
-    public void addXP(Skill s, int xp) {stats.addXp(s,xp); }
-    //Subtract given xp value for given player skill to skill xp total
-    public void subXP(Skill s, int xp) {stats.subXp(s,xp); }
 }

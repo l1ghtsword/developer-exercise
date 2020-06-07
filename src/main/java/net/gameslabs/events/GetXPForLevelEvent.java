@@ -2,7 +2,7 @@ package net.gameslabs.events;
 
 import net.gameslabs.api.Event;
 /*
-Event
+Event - Get experience required for level
  */
 
 

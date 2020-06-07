@@ -39,11 +39,11 @@ public class Assignment {
         //registry.sendEvent(new GiveXpEvent(mainPlayer, Skill.EXPLORATION, 25));
         //Initialize getPlayerLevel Obj as mainplayer with their skill level in the construction skill
         GiveXpEvent give = new GiveXpEvent(mainPlayer,Skill.CONSTRUCTION, 25);
-        //GetXPForLevelEvent whatdoineed = new GetXPForLevelEvent(1);
-
+        GetXPForLevelEvent whatdoineed = new GetXPForLevelEvent(1);
         GetPlayerLevel getPlayerLevel = new GetPlayerLevel(mainPlayer, Skill.CONSTRUCTION);
         //System.out.println String, everything passed is cast as a string
         //log(mainPlayer," xp = "," level", mainPlayer, getPlayerLevel.getLevel());
+        //log(mainPlayer," Construction xp = ",mainPlayer., mainPlayer, getPlayerLevel.getLevel());
         //Call runChecks Method
 
         //REEMPLOYMENT LATER
