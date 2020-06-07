@@ -8,8 +8,8 @@ public class Main {
 
     public static void main(String[] args) {
         new Assignment(
-            new MyXPBoosterComponent(),
-            new ChartComponent()
+            new ChartComponent(),
+            new MyXPBoosterComponent()
         ).run();
     }
 }

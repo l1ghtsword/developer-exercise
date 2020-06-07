@@ -27,7 +27,7 @@ public class ComponentRegistry {
         //really neat
         List<EventMethod> methods = componentList.stream().map(component -> component.getEvents(event)).flatMap(Collection::stream).collect(Collectors.toList());
 
-        //Iterate through the list object of events -I added a basic try/catch for transparency
+        //Iterate through the list object of events -I added a try/catch
         for (EventMethod eventMethod : methods) {
 
             // Would require proper handling in a production environment

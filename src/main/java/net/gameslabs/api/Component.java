@@ -1,8 +1,5 @@
 package net.gameslabs.api;
 
-//Reeeeeee i hate wildcard imports
-//import java.util.*;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,7 +24,7 @@ public abstract class Component {
     //registers event by adding it to the registeredEvents HashMap Obj
     public final <T extends Event> void registerEvent(Class<T> eventType, EventMethod<T> method) {
         //hashmap computeIfAbsent to check for null or pre-existing key (no duplicate events to be registered)
-        //when okay, create new arrayList e obj, then add event to obj
+        //If no duplicate event found, then add event to ArrayList
         registeredEvents.computeIfAbsent(eventType, e -> new ArrayList<>()).add(method);
     }
 

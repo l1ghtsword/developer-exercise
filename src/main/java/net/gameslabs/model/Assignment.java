@@ -3,8 +3,8 @@ package net.gameslabs.model;
 import net.gameslabs.api.Component;
 import net.gameslabs.api.ComponentRegistry;
 import net.gameslabs.api.Player;
-import net.gameslabs.components.ChartComponent;
 import net.gameslabs.events.GetPlayerLevel;
+import net.gameslabs.events.GetXPForLevelEvent;
 import net.gameslabs.events.GiveXpEvent;
 import net.gameslabs.implem.PlayerImplem;
 
@@ -14,6 +14,7 @@ public class Assignment {
 
     protected final ComponentRegistry registry;
     private final Player mainPlayer;
+    private final Player someOtherPlayer;
 
     //Constructor method to receive one to many Component Objects
     public Assignment(Component ... myComponentsToAdd) {
@@ -28,19 +29,26 @@ public class Assignment {
 
         registry.load();
         mainPlayer = PlayerImplem.newPlayer("L1ghtsword_");
+        someOtherPlayer = PlayerImplem.newPlayer("Some_anon");
     }
 
     public final void run() {
         //Send GiveXpEvent Event Obj with params (PlayerImplem, Skill Obj, XP int)
-        registry.sendEvent(new GiveXpEvent(mainPlayer, Skill.CONSTRUCTION, 25));
+        //registry.sendEvent(new GiveXpEvent(mainPlayer, Skill.CONSTRUCTION, 25));
         //Send GiveXpEvent Event Obj with params (PlayerImplem, Skill Obj, XP int)
-        registry.sendEvent(new GiveXpEvent(mainPlayer, Skill.EXPLORATION, 25));
+        //registry.sendEvent(new GiveXpEvent(mainPlayer, Skill.EXPLORATION, 25));
         //Initialize getPlayerLevel Obj as mainplayer with their skill level in the construction skill
+        GiveXpEvent give = new GiveXpEvent(mainPlayer,Skill.CONSTRUCTION, 25);
+        //GetXPForLevelEvent whatdoineed = new GetXPForLevelEvent(1);
+
         GetPlayerLevel getPlayerLevel = new GetPlayerLevel(mainPlayer, Skill.CONSTRUCTION);
         //System.out.println String, everything passed is cast as a string
-        log("Player level", mainPlayer, getPlayerLevel.getLevel());
+        //log(mainPlayer," xp = "," level", mainPlayer, getPlayerLevel.getLevel());
         //Call runChecks Method
-        runChecks();
+
+        //REEMPLOYMENT LATER
+        // runChecks();
+
         //Call unload method from ComponentRegistry Obj
         registry.unload();
     }
