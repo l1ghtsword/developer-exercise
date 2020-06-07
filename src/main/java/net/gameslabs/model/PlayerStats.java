@@ -21,20 +21,14 @@ public class PlayerStats {
     //Method which combines get and set to determine current player XP level and add additional experience.
     //Modified to prevent negative or 0 values from being added
     public void addXp(Skill skill, int xp) {
-        if(xp >= 0) {
-            setXp(skill, getXp(skill) + xp);
-        }
-        else {
-            System.out.println("ERROR - Value added must be positive");
-        }
+        if(xp >= 0) { setXp(skill, getXp(skill) + xp); }
+        else { throw new AssignmentFailed("XP_ADD_ERROR - Xp value added must be positive integer"); }
     }
     public void subXp(Skill skill, int xp) {
         if(xp <= 0) {
-            if(getXp(skill) <= 0){
-                setXp(skill, getXp(skill) - xp);
-            }
-            else { System.out.println("ERROR - Skill xp is already 0 and can not be a negative value!"); }
+            if(getXp(skill) <= 0){ setXp(skill, getXp(skill) - xp); }
+            else { throw new AssignmentFailed("XP_NEG_ERROR - Skill xp is already 0 and can not be a negative value!"); }
         }
-        else { System.out.println("ERROR - Value added must be negative"); }
+        else { throw new AssignmentFailed("XP_SUB_ERROR - Value added must be a negative Integer"); }
     }
 }

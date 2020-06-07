@@ -14,6 +14,7 @@ public class GetPlayerLevel extends PlayerEvent {
         //set instance skill obj to skill provided in event constructor
         this.skill = skill;
     }
+
     //Return event skill being checked
     public Skill getSkill() {
         return skill;

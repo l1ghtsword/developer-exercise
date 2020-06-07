@@ -8,6 +8,7 @@ import net.gameslabs.events.GetXPForLevelEvent;
 import net.gameslabs.events.GiveXpEvent;
 import net.gameslabs.implem.PlayerImplem;
 
+import java.rmi.registry.Registry;
 import java.util.Arrays;
 
 public class Assignment {
@@ -38,17 +39,22 @@ public class Assignment {
         //Send GiveXpEvent Event Obj with params (PlayerImplem, Skill Obj, XP int)
         //registry.sendEvent(new GiveXpEvent(mainPlayer, Skill.EXPLORATION, 25));
         //Initialize getPlayerLevel Obj as mainplayer with their skill level in the construction skill
-        GiveXpEvent give = new GiveXpEvent(mainPlayer,Skill.CONSTRUCTION, 25);
-        GetXPForLevelEvent whatdoineed = new GetXPForLevelEvent(1);
-        GetPlayerLevel getPlayerLevel = new GetPlayerLevel(mainPlayer, Skill.CONSTRUCTION);
+        //GiveXpEvent give = new GiveXpEvent(mainPlayer,Skill.CONSTRUCTION, 25);
+        //GetXPForLevelEvent whatdoineed = new GetXPForLevelEvent(1);
+        //GetPlayerLevel getPlayerLevel = new GetPlayerLevel(mainPlayer, Skill.CONSTRUCTION);
         //System.out.println String, everything passed is cast as a string
         //log(mainPlayer," xp = "," level", mainPlayer, getPlayerLevel.getLevel());
         //log(mainPlayer," Construction xp = ",mainPlayer., mainPlayer, getPlayerLevel.getLevel());
         //Call runChecks Method
+        log("Sending xp event for Exploration. Level is "+getLevel(Skill.EXPLORATION));
+        registry.sendEvent(new GiveXpEvent(mainPlayer,Skill.EXPLORATION,25));
+        log("Exploration level is now "+getLevel(Skill.EXPLORATION));
+        log(" ");
+        log("Sending xp event for Construction. Level is "+getLevel(Skill.CONSTRUCTION));
+        registry.sendEvent(new GiveXpEvent(mainPlayer,Skill.CONSTRUCTION,25));
+        log("Construction level is now "+getLevel(Skill.CONSTRUCTION));
 
-        //REEMPLOYMENT LATER
-        // runChecks();
-
+        runChecks();
         //Call unload method from ComponentRegistry Obj
         registry.unload();
     }
@@ -69,7 +75,7 @@ public class Assignment {
         return getPlayerLevel.getLevel();
     }
     //Iterate through all received Objects as ArrayList and print it out as a string
-    public void log(Object ... arguments) {
+    public static void log(Object... arguments) {
         System.out.println(Arrays.asList(arguments).toString());
     }
 }

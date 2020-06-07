@@ -9,8 +9,4 @@ public interface Player {
     String getId();
     String getName();
     UUID getUuid();
-    PlayerStats getStats();
-    void setStats(Skill s, int xp);
-    void addStats(Skill s, int xp);
-    void subStats(Skill s, int xp);
 }

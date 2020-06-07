@@ -21,7 +21,7 @@ public class GiveXpEvent extends PlayerEvent {
         return skill;
     }
     //Return event xp being given
-    public int getXp() { return xp; }
+    public int getXp() { return this.xp; }
     //Set event xp being given (redundant as this is set in event constructor)
     public void setXp(int xp) { this.xp = xp; }
 }
