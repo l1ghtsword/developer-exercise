@@ -4,11 +4,11 @@ import net.gameslabs.api.Component;
 import net.gameslabs.api.ComponentRegistry;
 import net.gameslabs.api.Player;
 import net.gameslabs.events.GetPlayerLevel;
-import net.gameslabs.events.GetXPForLevelEvent;
 import net.gameslabs.events.GiveXpEvent;
+import net.gameslabs.exception.AssignmentFailed;
 import net.gameslabs.implem.PlayerImplem;
+import net.gameslabs.model.enums.Skill;
 
-import java.rmi.registry.Registry;
 import java.util.Arrays;
 
 public class Assignment {

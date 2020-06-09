@@ -1,4 +1,7 @@
-package net.gameslabs.model;
+package net.gameslabs.model.objects;
+import net.gameslabs.exception.AssignmentFailed;
+import net.gameslabs.model.enums.Skill;
+
 import java.util.EnumMap;
 import java.util.Map;
 

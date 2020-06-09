@@ -2,11 +2,7 @@ package assignment.components;
 
 import net.gameslabs.api.Component;
 import net.gameslabs.api.Player;
-import net.gameslabs.events.GetPlayerLevel;
-import net.gameslabs.events.GetXPForLevelEvent;
-import net.gameslabs.events.GiveXpEvent;
-import net.gameslabs.model.PlayerInventory;
-import net.gameslabs.model.PlayerStats;
+import net.gameslabs.model.objects.PlayerInventory;
 
 import java.util.HashMap;
 

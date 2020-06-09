@@ -2,7 +2,7 @@ package net.gameslabs.events;
 
 import net.gameslabs.api.Player;
 import net.gameslabs.api.PlayerEvent;
-import net.gameslabs.model.Skill;
+import net.gameslabs.model.enums.Skill;
 
 public class GiveXpEvent extends PlayerEvent {
     private final Skill skill;

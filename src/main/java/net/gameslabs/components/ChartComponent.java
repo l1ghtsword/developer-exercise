@@ -5,7 +5,7 @@ import net.gameslabs.api.Player;
 import net.gameslabs.events.GetPlayerLevel;
 import net.gameslabs.events.GetXPForLevelEvent;
 import net.gameslabs.events.GiveXpEvent;
-import net.gameslabs.model.PlayerStats;
+import net.gameslabs.model.objects.PlayerStats;
 
 import java.util.HashMap;
 
