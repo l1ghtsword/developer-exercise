@@ -1,5 +1,5 @@
 test line
-# Developer assignment
+# Developer l1ghtsword
 Welcome to the GamesLabs developer assignment. The goal of this assignment is to test your ability to use :
 - git
 - maven

@@ -1,9 +1,9 @@
-package assignment;
+package ca.braelor.l1ghtsword.assignment;
 
-import assignment.components.InventoryComponent;
-import assignment.components.MyXPBoosterComponent;
+import ca.braelor.l1ghtsword.assignment.components.InventoryComponent;
+import ca.braelor.l1ghtsword.assignment.components.MyXPBoosterComponent;
 import net.gameslabs.components.ChartComponent;
-import net.gameslabs.model.Assignment;
+import net.gameslabs.model.objects.Assignment;
 
 public class Main {
 

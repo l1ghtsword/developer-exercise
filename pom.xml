@@ -4,7 +4,7 @@
     <groupId>net.gameslabs</groupId>
     <artifactId>dev-exercise</artifactId>
     <packaging>jar</packaging>
-    <version>1.4.0</version>
+    <version>1.4.1</version>
     <name>GamesLabs-dev-exercise</name>
     <url>https://gameslabs.net</url>
 
@@ -25,7 +25,6 @@
                 </configuration>
             </plugin>
             <plugin>
-                <!-- Build an executable JAR -->
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
                 <version>3.0.2</version>
@@ -34,7 +33,7 @@
                         <manifest>
                             <addClasspath>true</addClasspath>
                             <classpathPrefix>lib/</classpathPrefix>
-                            <mainClass>assignment.Main</mainClass>
+                            <mainClass>ca.braelor.l1ghtsword.assignment.Main</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

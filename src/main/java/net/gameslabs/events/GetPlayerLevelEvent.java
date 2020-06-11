@@ -4,11 +4,11 @@ import net.gameslabs.api.Player;
 import net.gameslabs.api.PlayerEvent;
 import net.gameslabs.model.enums.Skill;
 
-public class GetPlayerLevel extends PlayerEvent {
+public class GetPlayerLevelEvent extends PlayerEvent {
     private final Skill skill;
     private int level;
 
-    public GetPlayerLevel(Player player, Skill skill) {
+    public GetPlayerLevelEvent(Player player, Skill skill) {
         //set instance player obj (inherited from the superclass) to provided player obj in event constructor
         super(player);
         //set instance skill obj to skill provided in event constructor

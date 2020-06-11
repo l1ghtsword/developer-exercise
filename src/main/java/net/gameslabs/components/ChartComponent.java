@@ -2,7 +2,7 @@ package net.gameslabs.components;
 
 import net.gameslabs.api.Component;
 import net.gameslabs.api.Player;
-import net.gameslabs.events.GetPlayerLevel;
+import net.gameslabs.events.GetPlayerLevelEvent;
 import net.gameslabs.events.GetXPForLevelEvent;
 import net.gameslabs.events.GiveXpEvent;
 import net.gameslabs.model.objects.PlayerStats;
@@ -24,11 +24,11 @@ public class ChartComponent extends Component {
         //Register event listener onGiveXPToPlayer listening for GiveXpEvent event
         registerEvent(GiveXpEvent.class, this::onGiveXPToPlayer);
         //Register event listener onGetPlayerLevel listening for GetPlayerLevel event
-        registerEvent(GetPlayerLevel.class, this::onGetPlayerLevel);
+        registerEvent(GetPlayerLevelEvent.class, this::onGetPlayerLevel);
     }
 
     //Listener to calculate the level of a player based on their current xp
-    private void onGetPlayerLevel(GetPlayerLevel e) { e.setLevel(getLevelFromXp(getStats(e.getPlayer()).getXp(e.getSkill()))); }
+    private void onGetPlayerLevel(GetPlayerLevelEvent e) { e.setLevel(getLevelFromXp(getStats(e.getPlayer()).getXp(e.getSkill()))); }
 
     //listener to set event value xp to required xp for given level ( player level * XP_STEP (50))
     private void onGetXPForLevel(GetXPForLevelEvent e) { e.setXp(e.getLevel() * XP_STEP); }

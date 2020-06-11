@@ -1,9 +1,10 @@
-package net.gameslabs.model;
+package net.gameslabs.model.objects;
 
 import net.gameslabs.api.Component;
 import net.gameslabs.api.ComponentRegistry;
 import net.gameslabs.api.Player;
-import net.gameslabs.events.GetPlayerLevel;
+import net.gameslabs.events.GetPlayerLevelEvent;
+import net.gameslabs.events.GetXPForLevelEvent;
 import net.gameslabs.events.GiveXpEvent;
 import net.gameslabs.exception.AssignmentFailed;
 import net.gameslabs.implem.PlayerImplem;
@@ -34,18 +35,7 @@ public class Assignment {
     }
 
     public final void run() {
-        //Send GiveXpEvent Event Obj with params (PlayerImplem, Skill Obj, XP int)
-        //registry.sendEvent(new GiveXpEvent(mainPlayer, Skill.CONSTRUCTION, 25));
-        //Send GiveXpEvent Event Obj with params (PlayerImplem, Skill Obj, XP int)
-        //registry.sendEvent(new GiveXpEvent(mainPlayer, Skill.EXPLORATION, 25));
-        //Initialize getPlayerLevel Obj as mainplayer with their skill level in the construction skill
-        //GiveXpEvent give = new GiveXpEvent(mainPlayer,Skill.CONSTRUCTION, 25);
-        //GetXPForLevelEvent whatdoineed = new GetXPForLevelEvent(1);
-        //GetPlayerLevel getPlayerLevel = new GetPlayerLevel(mainPlayer, Skill.CONSTRUCTION);
-        //System.out.println String, everything passed is cast as a string
-        //log(mainPlayer," xp = "," level", mainPlayer, getPlayerLevel.getLevel());
-        //log(mainPlayer," Construction xp = ",mainPlayer., mainPlayer, getPlayerLevel.getLevel());
-        //Call runChecks Method
+
         log("Sending xp event for Exploration. Level is "+getLevel(Skill.EXPLORATION));
         registry.sendEvent(new GiveXpEvent(mainPlayer,Skill.EXPLORATION,25));
         log("Exploration level is now "+getLevel(Skill.EXPLORATION));
@@ -54,6 +44,8 @@ public class Assignment {
         registry.sendEvent(new GiveXpEvent(mainPlayer,Skill.CONSTRUCTION,25));
         log("Construction level is now "+getLevel(Skill.CONSTRUCTION));
 
+
+        //Call runChecks Method
         runChecks();
         //Call unload method from ComponentRegistry Obj
         registry.unload();
@@ -70,9 +62,9 @@ public class Assignment {
     // Will create new private instance of getPlayerLevel to call mainplayer's level for requested skill
     // will then send getPlayerLevel event and return
     private int getLevel(Skill skill) {
-        GetPlayerLevel getPlayerLevel = new GetPlayerLevel(mainPlayer, skill);
-        registry.sendEvent(getPlayerLevel);
-        return getPlayerLevel.getLevel();
+        GetPlayerLevelEvent getPlayerLevelEvent = new GetPlayerLevelEvent(mainPlayer, skill);
+        registry.sendEvent(getPlayerLevelEvent);
+        return getPlayerLevelEvent.getLevel();
     }
     //Iterate through all received Objects as ArrayList and print it out as a string
     public static void log(Object... arguments) {

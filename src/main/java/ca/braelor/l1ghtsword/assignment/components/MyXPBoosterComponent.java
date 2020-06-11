@@ -1,8 +1,8 @@
-package assignment.components;
+package ca.braelor.l1ghtsword.assignment.components;
 
 import net.gameslabs.api.Component;
 import net.gameslabs.events.GiveXpEvent;
-import net.gameslabs.model.Assignment;
+import net.gameslabs.model.objects.Assignment;
 import net.gameslabs.model.enums.Skill;
 
 public class MyXPBoosterComponent extends Component {
