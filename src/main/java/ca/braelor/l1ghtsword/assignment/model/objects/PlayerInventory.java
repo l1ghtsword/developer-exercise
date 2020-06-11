@@ -1,5 +1,6 @@
 package ca.braelor.l1ghtsword.assignment.model.objects;
 import ca.braelor.l1ghtsword.assignment.exception.ItemDoesNotExistError;
+import ca.braelor.l1ghtsword.assignment.exception.PlayerInventoryFullError;
 import ca.braelor.l1ghtsword.assignment.model.enums.Item;
 import ca.braelor.l1ghtsword.assignment.model.enums.ItemSlot;
 
@@ -23,16 +24,19 @@ public class PlayerInventory {
         for (Map.Entry<ItemSlot, ItemData> is : this.inventory.entrySet()) {
             if (is.getValue().getItem().equals(i)) { return is.getKey(); }
         }
-        throw new ItemDoesNotExistError(i);
+        if(i.equals(Item.EMPTY)) {throw new PlayerInventoryFullError();
+        } else { throw new ItemDoesNotExistError(i); }
     }
 
     //get item slots for specified item
     public List<ItemSlot> getItemSlots(Item i) {
         List<ItemSlot> ItemDataAtSlots = new ArrayList<ItemSlot>();
-        for (Map.Entry<ItemSlot, ItemData> is : this.inventory.entrySet()) {
-            if (is.getValue().getItem().equals(i)) { ItemDataAtSlots.add(is.getKey()); }
+        //for (Map.Entry<ItemSlot, ItemData> is : this.inventory.entrySet()) {
+        this.inventory.forEach((is,id) ->{ if (id.getItem().equals(i)) { ItemDataAtSlots.add(is); } } );
+        if(ItemDataAtSlots.isEmpty()) {
+            if(i.equals(Item.EMPTY)) {throw new PlayerInventoryFullError();
+            } else { throw new ItemDoesNotExistError(i); }
         }
-        if(ItemDataAtSlots.isEmpty()) { throw new ItemDoesNotExistError(i); }
         return ItemDataAtSlots;
     }
 
