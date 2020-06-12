@@ -5,22 +5,19 @@ import net.gameslabs.api.Player;
 import net.gameslabs.api.PlayerEvent;
 
 
-public class GiveItemEvent extends PlayerEvent {
+public class GetPlayerItemEvent extends PlayerEvent {
     private final Item i;
     private int q;
+    private boolean has;
 
-    public GiveItemEvent(Player player, Item item) {
+    public GetPlayerItemEvent(Player player, Item item) {
         super(player);
         this.i = item;
-        this.q = 1;
-    }
-
-    public GiveItemEvent(Player player, Item item, int quantity) {
-        super(player);
-        this.i = item;
-        this.q = quantity;
     }
 
     public Item getItem() { return this.i; }
     public int getQuantity() { return q; }
+    public boolean hasItem() { return this.has; }
+    public void setQuantity(int nq) { this.q = nq; }
+    public void setHasItem(boolean set) { this.has = set; }
 }

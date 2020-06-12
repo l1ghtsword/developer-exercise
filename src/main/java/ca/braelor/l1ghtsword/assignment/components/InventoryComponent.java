@@ -1,6 +1,7 @@
 package ca.braelor.l1ghtsword.assignment.components;
 
-import ca.braelor.l1ghtsword.assignment.events.GiveItemEvent;
+import ca.braelor.l1ghtsword.assignment.events.GetPlayerItemEvent;
+import ca.braelor.l1ghtsword.assignment.events.GivePlayerItemEvent;
 import ca.braelor.l1ghtsword.assignment.exception.AdditionError;
 import ca.braelor.l1ghtsword.assignment.exception.ItemDoesNotExistError;
 import ca.braelor.l1ghtsword.assignment.exception.NotEnoughInventorySpaceError;
@@ -26,12 +27,11 @@ public class InventoryComponent extends Component {
 
     @Override
     public void onLoad() {
-        //EX: registerEvent(GetXPForLevelEvent.class, this::onGetXPForLevel);
-        registerEvent(GiveItemEvent.class, this::onGivePlayerItem);
-
+        registerEvent(GivePlayerItemEvent.class, this::onGivePlayerItem);
+        registerEvent(GetPlayerItemEvent.class, this::onGetPlayerItem);
     }
-    //EX: private void onGetXPForLevel(GetXPForLevelEvent e) { e.setXp(e.getLevel() * XP_STEP); }
-    private void onGivePlayerItem(GiveItemEvent e){
+
+    private void onGivePlayerItem(GivePlayerItemEvent e){
         PlayerInventory inv = this.getInventory(e.getPlayer());
         Item i = e.getItem();
         int q = e.getQuantity();
@@ -55,6 +55,24 @@ public class InventoryComponent extends Component {
         //player items have been given or cannot be given, kill the event
         e.setCancelled(true);
     }
+
+    private void onGetPlayerItem(GetPlayerItemEvent e){
+        PlayerInventory inv = this.getInventory(e.getPlayer());
+        Item i = e.getItem();
+        int q = 0;
+
+        try{
+            for(ItemSlot is : (inv.getItemSlots(i))){
+                if (inv.getItemDataAt(is).getItem().equals(i)) {
+                    q += inv.getItemDataAt(is).getQuantity();
+                }
+            }
+            e.setQuantity(q);
+            e.setHasItem(true);
+        }
+        catch(ItemDoesNotExistError err) { e.setHasItem(false); }
+    }
+
 
 
 
