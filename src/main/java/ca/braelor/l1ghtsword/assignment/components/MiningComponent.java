@@ -34,16 +34,18 @@ public class MiningComponent extends Component {
     public void onLoad() {
         registerEvent(PlayerMiningEvent.class, this::onPlayerMining);
         registerEvent(GetOreInfoEvent.class, this::onGetOreInfo);
-
     }
 
     private void onPlayerMining(PlayerMiningEvent e) {
         GetPlayerLevelEvent pLevel = new GetPlayerLevelEvent(e.getPlayer(), Skill.MINING);
+        send(pLevel);
         Ore o = getOre(e.getRock());
 
         try {
             if (pLevel.getLevel() >= o.getLevel()) {
+                log(e.getPlayer().getName()+" has high enough level, giving 1x "+o.getItem());
                 send(new GivePlayerItemEvent(e.getPlayer(),o.getItem()));
+                log(e.getPlayer().getName()+" will receive "+o.getXp()+" XP");
                 send(new GiveXpEvent(e.getPlayer(),Skill.MINING,o.getXp()));
             } else { throw new PlayerLevelTooLow(e.getPlayer(), Skill.MINING, o.getLevel()); }
         } catch (PlayerLevelTooLow err) { log(err.getMessage()); }
@@ -53,8 +55,6 @@ public class MiningComponent extends Component {
     private Ore onGetOreInfo(GetOreInfoEvent e){
         return e.getOre();
     }
-
-
 
     private Ore getOre(Rock r) { return ores.get(r); }
 

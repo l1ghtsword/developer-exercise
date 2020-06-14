@@ -48,6 +48,7 @@ public class Assignment {
         log("Sending xp event for Construction. Level is "+getLevel(mainPlayer, Skill.CONSTRUCTION));
         registry.sendEvent(new GiveXpEvent(mainPlayer,Skill.CONSTRUCTION,25));
         log("Construction level is now "+getLevel(mainPlayer, Skill.CONSTRUCTION));
+
         log("Giving player 2000 coins!");
         registry.sendEvent(new GivePlayerItemEvent(someOtherPlayer,Item.COINS,2000));
         ItemData id = getItem(someOtherPlayer, Item.COINS);
@@ -62,14 +63,18 @@ public class Assignment {
         log(mainPlayer+" Has "+id.getQuantity()+" "+id.getItem()+" in their Inventory");
         id = getItem(someOtherPlayer, Item.FISH);
         log(someOtherPlayer+" Has "+id.getQuantity()+" "+id.getItem()+" in their Inventory");
+
+        log(mainPlayer.getName()+getLevel(mainPlayer, Skill.MINING));
         log(mainPlayer+" is mining "+ Rock.COAL);
         registry.sendEvent(new PlayerMiningEvent(mainPlayer,Rock.COAL));
-        log(mainPlayer+" is receiving 250 xp to reach level 5");
-        registry.sendEvent(new GiveXpEvent(mainPlayer, Skill.MINING, 250));
+        log(mainPlayer+" is receiving 200 xp to reach level 5");
+        registry.sendEvent(new GiveXpEvent(mainPlayer, Skill.MINING, 200));
         log("Mining level is now "+getLevel(mainPlayer, Skill.MINING));
         log(mainPlayer+" is mining "+ Rock.COAL);
         registry.sendEvent(new PlayerMiningEvent(mainPlayer,Rock.COAL));
         log("Mining level is now "+getLevel(mainPlayer, Skill.MINING));
+        id = getItem(mainPlayer,Item.COAL_ORE);
+        log(mainPlayer+" Has "+id.getQuantity()+" "+id.getItem()+" in their Inventory");
 
 
 
