@@ -6,5 +6,14 @@ public enum Item {
     FISH,
     IRON_PICKAXE,
     BABANZA,
-    COINS
+    COINS,
+    TIN_ORE,
+    COPPER_ORE,
+    IRON_ORE,
+    SILVER_ORE,
+    COAL_ORE,
+    GOLD_ORE,
+    MITHRIL_ORE,
+    ADAMANTITE_ORE,
+    RUNITE_ORE
 }

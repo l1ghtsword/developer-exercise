@@ -2,8 +2,10 @@ package net.gameslabs.model.objects;
 
 import ca.braelor.l1ghtsword.assignment.events.GetPlayerItemEvent;
 import ca.braelor.l1ghtsword.assignment.events.GivePlayerItemEvent;
+import ca.braelor.l1ghtsword.assignment.events.PlayerMiningEvent;
 import ca.braelor.l1ghtsword.assignment.events.RemovePlayerItemEvent;
 import ca.braelor.l1ghtsword.assignment.model.enums.Item;
+import ca.braelor.l1ghtsword.assignment.model.enums.Rock;
 import ca.braelor.l1ghtsword.assignment.model.objects.ItemData;
 import net.gameslabs.api.Component;
 import net.gameslabs.api.ComponentRegistry;
@@ -60,6 +62,16 @@ public class Assignment {
         log(mainPlayer+" Has "+id.getQuantity()+" "+id.getItem()+" in their Inventory");
         id = getItem(someOtherPlayer, Item.FISH);
         log(someOtherPlayer+" Has "+id.getQuantity()+" "+id.getItem()+" in their Inventory");
+        log(mainPlayer+" is mining "+ Rock.COAL);
+        registry.sendEvent(new PlayerMiningEvent(mainPlayer,Rock.COAL));
+        log(mainPlayer+" is receiving 250 xp to reach level 5");
+        registry.sendEvent(new GiveXpEvent(mainPlayer, Skill.MINING, 250));
+        log("Mining level is now "+getLevel(mainPlayer, Skill.MINING));
+        log(mainPlayer+" is mining "+ Rock.COAL);
+        registry.sendEvent(new PlayerMiningEvent(mainPlayer,Rock.COAL));
+        log("Mining level is now "+getLevel(mainPlayer, Skill.MINING));
+
+
 
         //Call runChecks Method
         runChecks();
@@ -73,6 +85,7 @@ public class Assignment {
         if (getLevel(mainPlayer, Skill.EXPLORATION) != 1) throw new AssignmentFailed("Exploration XP should be set to level 1");
         if (getLevel(mainPlayer, Skill.CONSTRUCTION) != 2) throw new AssignmentFailed("Construction XP should be set to level 2");
         if (getItem(someOtherPlayer, Item.COINS).getQuantity() != 1000) throw new AssignmentFailed("Player does not have 1000 coins in their inventory");
+        if (getLevel(mainPlayer, Skill.MINING) != 6) throw new AssignmentFailed("Mining XP should be set to level 6");
     }
 
     //Method to check player level

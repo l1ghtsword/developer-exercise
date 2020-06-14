@@ -1,6 +1,7 @@
 package ca.braelor.l1ghtsword.assignment;
 
 import ca.braelor.l1ghtsword.assignment.components.InventoryComponent;
+import ca.braelor.l1ghtsword.assignment.components.MiningComponent;
 import ca.braelor.l1ghtsword.assignment.components.MyXPBoosterComponent;
 import net.gameslabs.components.ChartComponent;
 import net.gameslabs.model.objects.Assignment;
@@ -11,7 +12,8 @@ public class Main {
         new Assignment(
             new MyXPBoosterComponent(),
             new ChartComponent(),
-            new InventoryComponent()
+            new InventoryComponent(),
+            new MiningComponent()
         ).run();
     }
 }

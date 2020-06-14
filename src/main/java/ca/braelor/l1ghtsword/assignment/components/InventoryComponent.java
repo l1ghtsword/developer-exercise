@@ -6,8 +6,7 @@ import ca.braelor.l1ghtsword.assignment.events.RemovePlayerItemEvent;
 import ca.braelor.l1ghtsword.assignment.exception.*;
 import ca.braelor.l1ghtsword.assignment.model.enums.Item;
 import ca.braelor.l1ghtsword.assignment.model.enums.ItemSlot;
-import ca.braelor.l1ghtsword.assignment.model.enums.StackableItem;
-import ca.braelor.l1ghtsword.assignment.model.objects.ItemData;
+import ca.braelor.l1ghtsword.assignment.utils.util;
 import net.gameslabs.api.Component;
 import net.gameslabs.api.Player;
 import ca.braelor.l1ghtsword.assignment.model.objects.PlayerInventory;
@@ -35,7 +34,7 @@ public class InventoryComponent extends Component {
         Item i = e.getItem();
         int q = e.getQuantity();
 
-        if(isStackable(i)) {
+        if(util.isStackable(i)) {
             if(inv.hasItem(i)) {
                 if (!givePlayerItemAtItemStack(inv, i, q)) {
                     givePlayerItemAtEmptySlot(inv, i, q);
@@ -85,7 +84,7 @@ public class InventoryComponent extends Component {
     }
 
     public void givePlayerItemAtEmptySlot(PlayerInventory inv, Item i, int q ) {
-        try { inv.setItemAt(inv.getFirstItemSlot(Item.EMPTY),toItemData(i,q)); }
+        try { inv.setItemAt(inv.getFirstItemSlot(Item.EMPTY),util.toItemData(i,q)); }
         catch(PlayerInventoryFullError err){ log(err.getMessage()); }
     }
 
@@ -93,7 +92,7 @@ public class InventoryComponent extends Component {
         try {
             List<ItemSlot> islist = inv.getItemSlots(Item.EMPTY);
             if(islist.size() > q) {
-                IntStream.range(0,q).forEach(is -> { inv.setItemAt(islist.get(is),toItemData(i,1)); });
+                IntStream.range(0,q).forEach(is -> { inv.setItemAt(islist.get(is),util.toItemData(i,1)); });
             } else { throw new NotEnoughInventorySpaceError(); }
         }
         catch (PlayerInventoryFullError | NotEnoughInventorySpaceError err) { log(err.getMessage()); }
@@ -115,7 +114,7 @@ public class InventoryComponent extends Component {
         List<ItemSlot> slots;
         try {
             slots = inv.getItemSlots(i);
-            if(isStackable(i)){
+            if(util.isStackable(i)){
                 if(slots.size() == 1) {
                     int iq = inv.getItemDataAt(slots.get(0)).getQuantity();
                     if(iq > q) { inv.getItemDataAt(slots.get(0)).subQuantity(q); }
@@ -152,16 +151,7 @@ public class InventoryComponent extends Component {
         }
     }
 
-    public static boolean isStackable (Item i) {
-        for(StackableItem s : StackableItem.values()) {
-            if(s.toString().equals(i.toString())) { return true; }
-        }
-        return false;
-    }
-
-    public ItemData toItemData(Item i, int q) { return new ItemData(i,q); }
-
-    private PlayerInventory getInventory(Player p) {
+    public PlayerInventory getInventory(Player p) {
         if (persistence.containsKey(p)) { return persistence.get(p); }
         return persistence.computeIfAbsent(p, pi -> new PlayerInventory());
     }
