@@ -37,9 +37,10 @@ public class ItemData {
 
     public void subQuantity(int q) {
         if(q > 0) {
-            if ((this.quantity - q) < 1) {
+            if ((this.quantity - q) >= 1) {
                 this.quantity -= q;
             } else { throw new SubtractionError(); }
-        } else { throw new NegativeValueError(); }
+        }
+        else { throw new NegativeValueError(); }
     }
 }

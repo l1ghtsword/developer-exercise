@@ -2,10 +2,8 @@ package ca.braelor.l1ghtsword.assignment.components;
 
 import ca.braelor.l1ghtsword.assignment.events.GetPlayerItemEvent;
 import ca.braelor.l1ghtsword.assignment.events.GivePlayerItemEvent;
-import ca.braelor.l1ghtsword.assignment.exception.AdditionError;
-import ca.braelor.l1ghtsword.assignment.exception.ItemDoesNotExistError;
-import ca.braelor.l1ghtsword.assignment.exception.NotEnoughInventorySpaceError;
-import ca.braelor.l1ghtsword.assignment.exception.PlayerInventoryFullError;
+import ca.braelor.l1ghtsword.assignment.events.RemovePlayerItemEvent;
+import ca.braelor.l1ghtsword.assignment.exception.*;
 import ca.braelor.l1ghtsword.assignment.model.enums.Item;
 import ca.braelor.l1ghtsword.assignment.model.enums.ItemSlot;
 import ca.braelor.l1ghtsword.assignment.model.enums.StackableItem;
@@ -29,6 +27,7 @@ public class InventoryComponent extends Component {
     public void onLoad() {
         registerEvent(GivePlayerItemEvent.class, this::onGivePlayerItem);
         registerEvent(GetPlayerItemEvent.class, this::onGetPlayerItem);
+        registerEvent(RemovePlayerItemEvent.class, this::onRemovePlayerItem);
     }
 
     private void onGivePlayerItem(GivePlayerItemEvent e){
@@ -36,23 +35,15 @@ public class InventoryComponent extends Component {
         Item i = e.getItem();
         int q = e.getQuantity();
 
-        //Is the item given stackable?
         if(isStackable(i)) {
-            //yes, do they already has an item stack?
             if(inv.hasItem(i)) {
-                //try to add item to slot containing the same itemstack
                 if (!givePlayerItemAtItemStack(inv, i, q)) {
-                    //if it fails throw an error but proceed to give item to first empty slot
                     givePlayerItemAtEmptySlot(inv, i, q);
                 }
-            //No, Give item to first available slot
             } else { givePlayerItemAtEmptySlot(inv, i, q); }
         } else {
-            //No, item is not stackable, check for emptySpace and attempt to fill empty inventory slots
-            //If player has not space or not enough space, no items are given.
             givePlayerToManyEmptySlots(inv,i,q);
         }
-        //player items have been given or cannot be given, kill the event
         e.setCancelled(true);
     }
 
@@ -61,20 +52,26 @@ public class InventoryComponent extends Component {
         Item i = e.getItem();
         int q = 0;
 
-        try{
-            for(ItemSlot is : (inv.getItemSlots(i))){
-                if (inv.getItemDataAt(is).getItem().equals(i)) {
-                    q += inv.getItemDataAt(is).getQuantity();
-                }
-            }
-            e.setQuantity(q);
+        if(inv.hasItem(i)) {
+            e.setQuantity(getPlayerItemAmount(inv,i));
             e.setHasItem(true);
-        }
-        catch(ItemDoesNotExistError err) { e.setHasItem(false); }
+        } else { e.setHasItem(false); }
+        e.setCancelled(true);
     }
 
+    private void onRemovePlayerItem(RemovePlayerItemEvent e) {
+        PlayerInventory inv = this.getInventory(e.getPlayer());
+        Item i = e.getItem();
+        int q = e.getQuantity();
 
-
+        try {
+            if (inv.hasItem(i)) {
+                if(!removePlayerItemStacks(inv,i,q)) { throw new NotEnoughItemsInPlayerInventory(i,q); }
+            } else { throw new ItemDoesNotExistError(i); }
+        }
+        catch(ItemDoesNotExistError | NotEnoughItemsInPlayerInventory err) { log(err.getMessage()); }
+        e.setCancelled(true);
+    }
 
     public boolean givePlayerItemAtItemStack(PlayerInventory inv, Item i, int q ) {
         try {
@@ -100,6 +97,59 @@ public class InventoryComponent extends Component {
             } else { throw new NotEnoughInventorySpaceError(); }
         }
         catch (PlayerInventoryFullError | NotEnoughInventorySpaceError err) { log(err.getMessage()); }
+    }
+
+    public int getPlayerItemAmount(PlayerInventory inv, Item i) {
+        int q = 0;
+            try {
+                for (ItemSlot is : inv.getItemSlots(i)) {
+                    if (inv.getItemDataAt(is).getItem().equals(i)) {
+                        q += inv.getItemDataAt(is).getQuantity();
+                    }
+                }
+            } catch (ItemDoesNotExistError err) { log(err.getMessage()); }
+            return q;
+    }
+
+    public boolean removePlayerItemStacks( PlayerInventory inv, Item i, int q ) {
+        List<ItemSlot> slots;
+        try {
+            slots = inv.getItemSlots(i);
+            if(isStackable(i)){
+                if(slots.size() == 1) {
+                    int iq = inv.getItemDataAt(slots.get(0)).getQuantity();
+                    if(iq > q) { inv.getItemDataAt(slots.get(0)).subQuantity(q); }
+                    else if(iq == q) { inv.removeItem(slots.get(0)); }
+                    else { throw new NotEnoughItemsInPlayerInventory(i,q); }
+
+                } else {
+                    if(getPlayerItemAmount(inv,i) >= q) {
+                        for (ItemSlot slot : slots) {
+                            //Explicit exit when remove amount complete
+                            if (q <= 0) { return true; }
+                            //get Item Stack Amount
+                            int iq = inv.getItemDataAt(slot).getQuantity();
+                            if (iq > q) {
+                                inv.getItemDataAt(slots.get(0)).subQuantity(q);
+                                q = 0;
+                            } else {
+                                inv.removeItem(slots.get(0));
+                                q -= iq;
+                            }
+                        }
+                    } else { throw new NotEnoughItemsInPlayerInventory(i,q); }
+                }
+            } else {
+                if(slots.size() >= q) {
+                    for( ItemSlot slot : slots) { inv.removeItem(slot); }
+                } else { throw new NotEnoughItemsInPlayerInventory(i,q); }
+            }
+            return true;
+        }
+        catch(ItemDoesNotExistError | NotEnoughItemsInPlayerInventory | SubtractionError err){
+            log(err.getMessage());
+            return false;
+        }
     }
 
     public static boolean isStackable (Item i) {

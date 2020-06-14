@@ -25,7 +25,8 @@ public class PlayerInventory {
             if (is.getValue().getItem().equals(i)) { return is.getKey(); }
         }
         if(i.equals(Item.EMPTY)) {throw new PlayerInventoryFullError();
-        } else { throw new ItemDoesNotExistError(i); }
+        }
+        else { throw new ItemDoesNotExistError(i); }
     }
 
     //get item slots for specified item

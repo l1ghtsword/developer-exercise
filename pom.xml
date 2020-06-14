@@ -4,7 +4,15 @@
     <groupId>net.gameslabs</groupId>
     <artifactId>dev-exercise</artifactId>
     <packaging>jar</packaging>
-    <version>1.4.2</version>
+    <version>1.5.0</version>
+    <dependencies>
+        <dependency>
+            <groupId>org.jetbrains</groupId>
+            <artifactId>annotations</artifactId>
+            <version>RELEASE</version>
+            <scope>compile</scope>
+        </dependency>
+    </dependencies>
     <name>GamesLabs-dev-exercise</name>
     <url>https://gameslabs.net</url>
 
