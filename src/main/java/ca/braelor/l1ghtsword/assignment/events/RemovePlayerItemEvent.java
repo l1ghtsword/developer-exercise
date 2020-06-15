@@ -4,6 +4,12 @@ import ca.braelor.l1ghtsword.assignment.model.enums.Item;
 import net.gameslabs.api.Player;
 import net.gameslabs.api.PlayerEvent;
 
+/**
+ * Event used by InventoryComponent to request an item be removed from
+ * player inventory. Only provides information to requesting listener
+ *
+ * Event is canceled by InventoryComponent on success of failure
+ */
 
 public class RemovePlayerItemEvent extends PlayerEvent {
     private final Item i;

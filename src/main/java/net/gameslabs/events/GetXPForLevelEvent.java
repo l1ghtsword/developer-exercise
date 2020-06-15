@@ -18,8 +18,10 @@ public class GetXPForLevelEvent extends Event {
     }
     //return event level to requesting listener
     public int getLevel() { return level; }
+
     //return event xp earned to requesting listener
     public int getXp() { return xp; }
+
     //Set XP earned for event (to be read by listener, does not require addXp method)
     public void setXp(int xp) { this.xp = xp; }
 }

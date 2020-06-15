@@ -1,11 +1,12 @@
 package ca.braelor.l1ghtsword.assignment.model.enums;
 
-//Enum for skill titles, constants that will not change used to associate any skill check with an item on the list
+/**
+ * List of every item that is valid for inventoryComponent
+ */
 public enum Item {
     EMPTY,
-    FISH,
-    IRON_PICKAXE,
-    BABANZA,
+    BABANZA, //and never will be used... No.
+    TRAP_DOOR_MEME, //was like father to me
     COINS,
     TIN_ORE,
     COPPER_ORE,
@@ -15,5 +16,20 @@ public enum Item {
     GOLD_ORE,
     MITHRIL_ORE,
     ADAMANTITE_ORE,
-    RUNITE_ORE
+    RUNITE_ORE,
+    RAW_SHRIMP,
+    SHRIMP,
+    BURNT_SHRIMP,
+    RAW_FISH,
+    FISH,
+    BURNT_FISH,
+    RAW_BEEF,
+    BEEF,
+    BURNT_BEEF,
+    RAW_CHICKEN,
+    CHICKEN,
+    BURNT_CHICKEN,
+    RAW_SPAGHETTI,
+    SPAGHETTI,
+    BURNT_SPAGHETTI
 }

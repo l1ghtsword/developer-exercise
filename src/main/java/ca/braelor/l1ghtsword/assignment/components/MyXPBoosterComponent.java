@@ -5,6 +5,11 @@ import net.gameslabs.events.GiveXpEvent;
 import net.gameslabs.model.objects.Assignment;
 import net.gameslabs.model.enums.Skill;
 
+/**
+ * Simple Component that listens for GiveXpEvent's and will multiply xp
+ * being given by 2x if that skill is in Construction.
+ */
+
 public class MyXPBoosterComponent extends Component {
 
     @Override

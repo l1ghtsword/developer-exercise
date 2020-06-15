@@ -1,11 +1,13 @@
 package ca.braelor.l1ghtsword.assignment.model.objects;
 
-import ca.braelor.l1ghtsword.assignment.exception.AdditionError;
-import ca.braelor.l1ghtsword.assignment.exception.CannotBeZeroError;
-import ca.braelor.l1ghtsword.assignment.exception.NegativeValueError;
-import ca.braelor.l1ghtsword.assignment.exception.SubtractionError;
 import ca.braelor.l1ghtsword.assignment.model.enums.Item;
 import ca.braelor.l1ghtsword.assignment.model.enums.Rock;
+
+/**
+ * Instanced obj used for associated Rock resources used in the Mining Skill
+ * Manages the Ore being mined variable such as What item will be received as a result of being mined successfully,
+ * What level is required to mine this ore, how much xp does this ore give when mined, etc.
+ */
 
 public class Ore {
 

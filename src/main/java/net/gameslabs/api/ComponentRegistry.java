@@ -30,16 +30,13 @@ public class ComponentRegistry {
         //Iterate through the list object of events -I added a try/catch
         for (EventMethod eventMethod : methods) {
 
-            // Would require proper handling in a production environment
+            // "Would require proper handling in a production environment"
+            //Agreed, just set a generic try/catch but is rather vague and potentially not very useful
+            //Added to prevent hard crash
             try {
                 eventMethod.onExecute(event);
-                if (event.isCancelled()) {
-                    break;
-                }
-            }
-            catch (Exception e) {
-                e.printStackTrace();
-            }
+                if (event.isCancelled()) { break; }
+            } catch (Exception e) { e.printStackTrace(); }
         }
     }
 

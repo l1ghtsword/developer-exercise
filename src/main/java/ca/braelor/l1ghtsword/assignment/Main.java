@@ -1,5 +1,6 @@
 package ca.braelor.l1ghtsword.assignment;
 
+import ca.braelor.l1ghtsword.assignment.components.CookingComponent;
 import ca.braelor.l1ghtsword.assignment.components.InventoryComponent;
 import ca.braelor.l1ghtsword.assignment.components.MiningComponent;
 import ca.braelor.l1ghtsword.assignment.components.MyXPBoosterComponent;
@@ -13,7 +14,8 @@ public class Main {
             new MyXPBoosterComponent(),
             new ChartComponent(),
             new InventoryComponent(),
-            new MiningComponent()
+            new MiningComponent(),
+            new CookingComponent()
         ).run();
     }
 }

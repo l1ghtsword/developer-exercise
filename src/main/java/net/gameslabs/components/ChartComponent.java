@@ -10,20 +10,18 @@ import net.gameslabs.model.objects.PlayerStats;
 import java.util.HashMap;
 
 public class ChartComponent extends Component {
-    //*Assumption* constant value for per level requirement
+    //Constant value for per level requirement 50 xp = level 2, 200 xp = level 5, etc
     private static final int XP_STEP = 50;
     //Declare Map to pair Player to PlayerStats obj as "persistence"
     private HashMap<Player, PlayerStats> persistence;
     //Initialize persistence as HashMap obj (Array of playerStat objects using "Player" as the key)
     public ChartComponent() { persistence = new HashMap<>(); }
 
+    //Register Events to listen to
     @Override
     public void onLoad() {
-        //Register event listener onGetXPForLevel listening for GetXPForLevelEvent event
         registerEvent(GetXPForLevelEvent.class, this::onGetXPForLevel);
-        //Register event listener onGiveXPToPlayer listening for GiveXpEvent event
         registerEvent(GiveXpEvent.class, this::onGiveXPToPlayer);
-        //Register event listener onGetPlayerLevel listening for GetPlayerLevel event
         registerEvent(GetPlayerLevelEvent.class, this::onGetPlayerLevel);
     }
 

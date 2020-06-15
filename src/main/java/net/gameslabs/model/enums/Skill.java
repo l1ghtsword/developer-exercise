@@ -4,5 +4,6 @@ package net.gameslabs.model.enums;
 public enum Skill {
     CONSTRUCTION,
     EXPLORATION,
-    MINING
+    MINING,
+    COOKING
 }

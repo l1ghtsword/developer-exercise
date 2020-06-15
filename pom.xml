@@ -4,7 +4,7 @@
     <groupId>net.gameslabs</groupId>
     <artifactId>dev-exercise</artifactId>
     <packaging>jar</packaging>
-    <version>1.5.0</version>
+    <version>1.6.0</version>
     <dependencies>
         <dependency>
             <groupId>org.jetbrains</groupId>
@@ -32,6 +32,8 @@
                     <target>1.8</target>
                 </configuration>
             </plugin>
+
+<!--Added this plugin to make .Jar runnable -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
@@ -46,6 +48,7 @@
                     </archive>
                 </configuration>
             </plugin>
+
         </plugins>
     </build>
 </project>

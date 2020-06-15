@@ -2,6 +2,12 @@ package ca.braelor.l1ghtsword.assignment.model.objects;
 import ca.braelor.l1ghtsword.assignment.exception.*;
 import ca.braelor.l1ghtsword.assignment.model.enums.Item;
 
+/**
+ * Instanced obj for all Item's
+ * Used to manage Itemstacks as items may be stackable and have multiple of the same item in the same item slot
+ * ItemData only manages the item's name and amount in-slot, it cannot know any skill or use specific functions
+ */
+
 public class ItemData {
 
     private Item item;
@@ -40,7 +46,6 @@ public class ItemData {
             if ((this.quantity - q) >= 1) {
                 this.quantity -= q;
             } else { throw new SubtractionError(); }
-        }
-        else { throw new NegativeValueError(); }
+        } else { throw new NegativeValueError(); }
     }
 }
