@@ -3,7 +3,12 @@ package ca.braelor.l1ghtsword.assignment.model;
 import ca.braelor.l1ghtsword.assignment.exception.*;
 import ca.braelor.l1ghtsword.assignment.interfaces.Item;
 import ca.braelor.l1ghtsword.assignment.model.enums.ItemID;
-import ca.braelor.l1ghtsword.assignment.model.objects.items.empty;
+import ca.braelor.l1ghtsword.assignment.model.objects.items.Empty;
+
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+
+import static net.gameslabs.model.objects.Assignment.log;
 
 /**
  * Refactored to define the setters and getters to be inherited by children class that will use them.
@@ -12,17 +17,22 @@ import ca.braelor.l1ghtsword.assignment.model.objects.items.empty;
 
 public class ItemData implements Item {
 
-    protected final ItemID itemID = ItemID.EMPTY;
-    protected int itemQuantity = 1;
-    protected int cookBurnChance = 100;
-    protected Item itemOnCookSuccess = new empty();
-    protected Item itemOnCookFail = new empty();
-    protected int levelRequirement = 666;
-    protected int xpAmountGiven = 0;
-    protected String onUseProperties = "";
-    protected final boolean imStackable = false;
-    protected final boolean imUsable = false;
-    protected boolean imCookable = false;
+    protected ItemID itemID;
+    protected int itemQuantity;
+    protected int cookBurnChance;
+    protected ItemID itemOnCookSuccess;
+    protected ItemID itemOnCookFail;
+    protected int levelRequirement;
+    protected int xpAmountGiven;
+    protected String onUseProperties;
+    protected boolean imStackable;
+    protected boolean imUsable;
+    protected boolean imCookable;
+
+    public ItemData(ItemID thisItemID) {
+        this.itemID = thisItemID;
+        this.itemQuantity = 1;
+    }
 
     public ItemID getItemID() {
         return this.itemID;
@@ -70,11 +80,11 @@ public class ItemData implements Item {
         return this.cookBurnChance;
     }
 
-    public Item getCookedItem() {
+    public ItemID getCookedItem() {
         return this.itemOnCookSuccess;
     }
 
-    public Item getBurntItem() {
+    public ItemID getBurntItem() {
         return this.itemOnCookFail;
     }
 
@@ -100,5 +110,36 @@ public class ItemData implements Item {
 
     public boolean isCookable() {
         return this.imCookable;
+    }
+
+    /*
+    Clearly i ddi not come up with on my own... stacktrace reference here https://stackoverflow.com/questions/7495785/java-how-to-instantiate-a-class-from-string
+    I needed a way to on the fly create a object instance of ItemData subclasses on the fly, but was stuck with initialization errors as i cant know the correct subclass.
+
+    item.getClass().getName() should get the correct class name in the form of a String argument.
+    I use this to uniquely identify the correct Class, where i can then build a constructor object
+    and create a new instance of the class.
+
+    I could spend more time on this and perhaps create a map of ItemID Enums and Class Strings constructed at runtime and reference that,
+    but for now i settled for reflection as its easier. Though im aware, slower.
+    Additionally, there are limitations to requiring the same Item subclass as opposed to just an ID that im also aware of,
+    but i do not reach those limitations in this example.
+     */
+    public Item createNewInstanceOf(Item item) {
+        try {
+            //Use reflection to get the class from the existing class name as a string
+            Class<?> thisClass = Class.forName(item.getClass().getName());
+            //Get types in the form of an array of Objects to feed to the constructor creation
+            Class<?>[] types = {Double.TYPE, thisClass};
+            //Create the constructor using the Class String and the assembled types
+            Constructor<?> constructor = thisClass.getConstructor(types);
+
+            Object[] parameters = {(double) 0, Class.forName(item.getClass().getName())};
+            return (Item) constructor.newInstance(parameters);
+        } catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException error) {
+            log(error.getMessage());
+            //returns empty to prevent hard crash/ fix compiler ambiguity...
+            return new Empty();
+        }
     }
 }

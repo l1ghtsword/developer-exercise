@@ -13,9 +13,23 @@ public interface Item {
 
     void subQuantity(int quantity);
 
+    public int getBurnChance();
+
+    public ItemID getCookedItem();
+
+    public ItemID getBurntItem();
+
+    public int getLevelRequirement();
+
+    public int getXpAmountGiven();
+
+    public String getUseProperties();
+
     boolean isStackable();
 
     boolean isUsable();
 
     boolean isCookable();
+
+    Item createNewInstanceOf (Item item);
 }
