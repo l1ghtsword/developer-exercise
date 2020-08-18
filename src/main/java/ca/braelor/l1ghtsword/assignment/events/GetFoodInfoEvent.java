@@ -1,8 +1,8 @@
 package ca.braelor.l1ghtsword.assignment.events;
 
 import ca.braelor.l1ghtsword.assignment.exception.ItemNotCookableError;
-import ca.braelor.l1ghtsword.assignment.model.enums.Item;
-import ca.braelor.l1ghtsword.assignment.model.objects.Food;
+import ca.braelor.l1ghtsword.assignment.model.enums.ItemID;
+import ca.braelor.l1ghtsword.assignment.model.FoodData;
 import net.gameslabs.api.Event;
 
 import static net.gameslabs.model.objects.Assignment.log;
@@ -17,18 +17,18 @@ import static net.gameslabs.model.objects.Assignment.log;
  */
 
 public class GetFoodInfoEvent extends Event {
-    private final Item i;
-    private Food f;
+    private final ItemID i;
+    private FoodData f;
 
-    public GetFoodInfoEvent(Item item) {
+    public GetFoodInfoEvent(ItemID item) {
         this.i = item;
-        try { this.f = new Food(item);
+        try { this.f = new FoodData(item);
         } catch (ItemNotCookableError err) {
             log(err.getMessage());
             this.setCancelled(true);
         }
     }
 
-    public Item getItem(){ return this.i; }
-    public Food getFood(){ return this.f; }
+    public ItemID getItem(){ return this.i; }
+    public FoodData getFood(){ return this.f; }
 }

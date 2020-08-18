@@ -3,7 +3,7 @@ package ca.braelor.l1ghtsword.assignment.model.enums;
 /**
  * List of every item that is valid for inventoryComponent
  */
-public enum Item {
+public enum ItemID {
     EMPTY,
     BABANZA, //and never will be used... No.
     TRAP_DOOR_MEME, //was like father to me

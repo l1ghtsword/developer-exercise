@@ -1,8 +1,8 @@
 package ca.braelor.l1ghtsword.assignment.events;
 
 import ca.braelor.l1ghtsword.assignment.exception.ItemNotUsableError;
-import ca.braelor.l1ghtsword.assignment.model.enums.Item;
-import ca.braelor.l1ghtsword.assignment.model.objects.Usable;
+import ca.braelor.l1ghtsword.assignment.model.enums.ItemID;
+import ca.braelor.l1ghtsword.assignment.model.UsableData;
 import net.gameslabs.api.Player;
 import net.gameslabs.api.PlayerEvent;
 
@@ -15,23 +15,23 @@ import net.gameslabs.api.PlayerEvent;
  */
 
 public class UsePlayerItemEvent extends PlayerEvent {
-    private final Item i;
+    private final ItemID i;
     private final String properties;
 
-    public UsePlayerItemEvent(Player player, Item item) {
+    public UsePlayerItemEvent(Player player, ItemID item) {
         super(player);
         this.i = item;
         this.properties = initProperties(item);
     }
 
-    public Item getItem() { return this.i; }
+    public ItemID getItem() { return this.i; }
     public int getQuantity() { return 1; }
     public String getProperties() { return this.properties; }
 
 
-    private String initProperties(Item item){
+    private String initProperties(ItemID item){
         try {
-            Usable u = new Usable(item);
+            UsableData u = new UsableData(item);
             return u.getProperties();
         } catch(ItemNotUsableError err) {
             this.setCancelled(true);

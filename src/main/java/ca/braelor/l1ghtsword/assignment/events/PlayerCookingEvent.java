@@ -1,6 +1,6 @@
 package ca.braelor.l1ghtsword.assignment.events;
 
-import ca.braelor.l1ghtsword.assignment.model.enums.Item;
+import ca.braelor.l1ghtsword.assignment.model.enums.ItemID;
 import net.gameslabs.api.Player;
 import net.gameslabs.api.PlayerEvent;
 
@@ -13,12 +13,12 @@ import net.gameslabs.api.PlayerEvent;
  */
 
 public class PlayerCookingEvent extends PlayerEvent {
-    private final Item i;
+    private final ItemID i;
 
-    public PlayerCookingEvent(Player player, Item item) {
+    public PlayerCookingEvent(Player player, ItemID item) {
         super(player);
         this.i = item;
     }
 
-    public Item getItem() { return this.i; }
+    public ItemID getItem() { return this.i; }
 }

@@ -5,9 +5,11 @@ import ca.braelor.l1ghtsword.assignment.events.GivePlayerItemEvent;
 import ca.braelor.l1ghtsword.assignment.events.RemovePlayerItemEvent;
 import ca.braelor.l1ghtsword.assignment.events.UsePlayerItemEvent;
 import ca.braelor.l1ghtsword.assignment.exception.*;
-import ca.braelor.l1ghtsword.assignment.model.enums.Item;
+import ca.braelor.l1ghtsword.assignment.interfaces.Item;
+import ca.braelor.l1ghtsword.assignment.model.enums.ItemID;
 import ca.braelor.l1ghtsword.assignment.model.enums.ItemSlot;
-import ca.braelor.l1ghtsword.assignment.model.objects.Usable;
+import ca.braelor.l1ghtsword.assignment.model.UsableData;
+import ca.braelor.l1ghtsword.assignment.model.objects.items.coins;
 import ca.braelor.l1ghtsword.assignment.utils.util;
 import net.gameslabs.api.Component;
 import net.gameslabs.api.Player;
@@ -54,7 +56,7 @@ public class InventoryComponent extends Component {
 
     private void onGivePlayerItem(GivePlayerItemEvent e) {
         PlayerInventory inv = this.getInventory(e.getPlayer());
-        Item i = e.getItem();
+        ItemID i = e.getItem();
         int q = e.getQuantity();
 
         if (util.isStackable(i)) {
@@ -73,7 +75,7 @@ public class InventoryComponent extends Component {
 
     private void onGetPlayerItem(GetPlayerItemEvent e) {
         PlayerInventory inv = this.getInventory(e.getPlayer());
-        Item i = e.getItem();
+        ItemID i = e.getItem();
         int q = 0;
 
         if (inv.hasItem(i)) {
@@ -87,7 +89,7 @@ public class InventoryComponent extends Component {
 
     private void onRemovePlayerItem(RemovePlayerItemEvent e) {
         PlayerInventory inv = this.getInventory(e.getPlayer());
-        Item i = e.getItem();
+        ItemID i = e.getItem();
         int q = e.getQuantity();
 
         try {
@@ -106,7 +108,7 @@ public class InventoryComponent extends Component {
 
     private void onUsePlayerItem(UsePlayerItemEvent e) {
         PlayerInventory inv = this.getInventory(e.getPlayer());
-        Item i = e.getItem();
+        ItemID i = e.getItem();
         int q = e.getQuantity();
 
         if (inv.hasItem(i)) {
@@ -125,7 +127,7 @@ public class InventoryComponent extends Component {
         e.setCancelled(true);
     }
 
-    private boolean givePlayerItemAtItemStack(PlayerInventory inv, Item i, int q) {
+    private boolean givePlayerItemAtItemStack(PlayerInventory inv, ItemID i, int q) {
         try {
             inv.getItemDataAt(inv.getFirstItemSlot(i)).addQuantity(q);
             return true;
@@ -135,17 +137,17 @@ public class InventoryComponent extends Component {
         }
     }
 
-    private void givePlayerItemAtEmptySlot(PlayerInventory inv, Item i, int q) {
+    private void givePlayerItemAtEmptySlot(PlayerInventory inv, ItemID i, int q) {
         try {
-            inv.setItemAt(inv.getFirstItemSlot(Item.EMPTY), util.toItemData(i, q));
+            inv.setItemAt(inv.getFirstItemSlot(ItemID.EMPTY), util.toItemData(i, q));
         } catch (PlayerInventoryFullError err) {
             log(err.getMessage());
         }
     }
 
-    private void givePlayerToManyEmptySlots(PlayerInventory inv, Item i, int q) {
+    private void givePlayerToManyEmptySlots(PlayerInventory inv, ItemID i, int q) {
         try {
-            List<ItemSlot> islist = inv.getItemSlots(Item.EMPTY);
+            List<ItemSlot> islist = inv.getItemSlots(ItemID.EMPTY);
             if (islist.size() > q) {
                 IntStream.range(0, q).forEach(is -> {
                     inv.setItemAt(islist.get(is), util.toItemData(i, 1));
@@ -158,7 +160,7 @@ public class InventoryComponent extends Component {
         }
     }
 
-    private int getPlayerItemAmount(PlayerInventory inv, Item i) {
+    private int getPlayerItemAmount(PlayerInventory inv, ItemID i) {
         int q = 0;
         try {
             for (ItemSlot is : inv.getItemSlots(i)) {
@@ -172,7 +174,7 @@ public class InventoryComponent extends Component {
         return q;
     }
 
-    private boolean removePlayerItemStacks(PlayerInventory inv, Item i, int q) {
+    private boolean removePlayerItemStacks(PlayerInventory inv, ItemID i, int q) {
         List<ItemSlot> slots;
         try {
             slots = inv.getItemSlots(i);
@@ -222,9 +224,9 @@ public class InventoryComponent extends Component {
         }
     }
 
-    private void useItem(PlayerInventory inv, Item i, int q) {
+    private void useItem(PlayerInventory inv, ItemID i, int q) {
         if (isUsable(i)) {
-            log(new Usable(i).getProperties());
+            log(new UsableData(i).getProperties());
             removePlayerItemStacks(inv, i, q);
         } else {
             throw new ItemNotUsableError(i);

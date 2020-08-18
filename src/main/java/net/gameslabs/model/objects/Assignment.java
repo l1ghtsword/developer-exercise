@@ -1,9 +1,9 @@
 package net.gameslabs.model.objects;
 
 import ca.braelor.l1ghtsword.assignment.events.*;
-import ca.braelor.l1ghtsword.assignment.model.enums.Item;
+import ca.braelor.l1ghtsword.assignment.model.enums.ItemID;
 import ca.braelor.l1ghtsword.assignment.model.enums.Rock;
-import ca.braelor.l1ghtsword.assignment.model.objects.ItemData;
+import ca.braelor.l1ghtsword.assignment.model.ItemData;
 import net.gameslabs.api.Component;
 import net.gameslabs.api.ComponentRegistry;
 import net.gameslabs.api.Player;
@@ -51,18 +51,18 @@ public class Assignment {
 
         //Player inventory system checks (Flexible with stackable and unstackable items)
         log("Giving "+someOtherPlayer.getName()+" 2000 coins!");
-        registry.sendEvent(new GivePlayerItemEvent(someOtherPlayer,Item.COINS,2000));
-        ItemData id = getItem(someOtherPlayer, Item.COINS);
+        registry.sendEvent(new GivePlayerItemEvent(someOtherPlayer, ItemID.COINS,2000));
+        ItemData id = getItem(someOtherPlayer, ItemID.COINS);
         log(someOtherPlayer.getName() + " Has "+id.getQuantity()+" "+id.getItem()+" in their Inventory");
         log("Removing 1000 coins!");
-        registry.sendEvent(new RemovePlayerItemEvent(someOtherPlayer,Item.COINS,1000));
-        id = getItem(someOtherPlayer, Item.COINS);
+        registry.sendEvent(new RemovePlayerItemEvent(someOtherPlayer, ItemID.COINS,1000));
+        id = getItem(someOtherPlayer, ItemID.COINS);
         log(someOtherPlayer.getName() + " Has "+id.getQuantity()+" "+id.getItem()+" in their Inventory");
         log("Giving "+mainPlayer.getName()+" 5x Fish!");
-        registry.sendEvent(new GivePlayerItemEvent(mainPlayer,Item.FISH,5));
-        id = getItem(mainPlayer, Item.FISH);
+        registry.sendEvent(new GivePlayerItemEvent(mainPlayer, ItemID.FISH,5));
+        id = getItem(mainPlayer, ItemID.FISH);
         log(mainPlayer.getName()+" Has "+id.getQuantity()+" "+id.getItem()+" in their Inventory");
-        id = getItem(someOtherPlayer, Item.FISH);
+        id = getItem(someOtherPlayer, ItemID.FISH);
         log(someOtherPlayer.getName()+" Has "+id.getQuantity()+" "+id.getItem()+" in their Inventory");
 
         //Mining event stuff
@@ -75,24 +75,24 @@ public class Assignment {
         log(mainPlayer.getName()+" is mining "+ Rock.COAL);
         registry.sendEvent(new PlayerMiningEvent(mainPlayer,Rock.COAL));
         log("Mining level is now "+getLevel(mainPlayer, Skill.MINING));
-        id = getItem(mainPlayer,Item.COAL_ORE);
+        id = getItem(mainPlayer, ItemID.COAL_ORE);
         log(mainPlayer.getName()+" Has "+id.getQuantity()+" "+id.getItem()+" in their Inventory");
 
         //Cooking Event stuff
-        registry.sendEvent(new GivePlayerItemEvent(mainPlayer,Item.RAW_SHRIMP));
-        registry.sendEvent(new GivePlayerItemEvent(mainPlayer,Item.RAW_SPAGHETTI));
+        registry.sendEvent(new GivePlayerItemEvent(mainPlayer, ItemID.RAW_SHRIMP));
+        registry.sendEvent(new GivePlayerItemEvent(mainPlayer, ItemID.RAW_SPAGHETTI));
         log(mainPlayer.getName()+" has level "+getLevel(mainPlayer, Skill.COOKING)+" in cooking");
-        log(mainPlayer.getName()+" is cooking "+ Item.RAW_SHRIMP);
-        registry.sendEvent(new PlayerCookingEvent(mainPlayer,Item.RAW_SHRIMP));
-        log(mainPlayer.getName()+" is cooking "+ Item.RAW_SPAGHETTI);
-        registry.sendEvent(new PlayerCookingEvent(mainPlayer,Item.RAW_SPAGHETTI));
-        log(mainPlayer.getName()+" is cooking "+ Item.RAW_SHRIMP);
-        registry.sendEvent(new PlayerCookingEvent(mainPlayer,Item.RAW_SHRIMP));
-        log(mainPlayer.getName()+" is using (eating) "+ Item.RAW_SPAGHETTI);
-        UsePlayerItemEvent useItemEvent = new UsePlayerItemEvent(mainPlayer,Item.RAW_SPAGHETTI);
+        log(mainPlayer.getName()+" is cooking "+ ItemID.RAW_SHRIMP);
+        registry.sendEvent(new PlayerCookingEvent(mainPlayer, ItemID.RAW_SHRIMP));
+        log(mainPlayer.getName()+" is cooking "+ ItemID.RAW_SPAGHETTI);
+        registry.sendEvent(new PlayerCookingEvent(mainPlayer, ItemID.RAW_SPAGHETTI));
+        log(mainPlayer.getName()+" is cooking "+ ItemID.RAW_SHRIMP);
+        registry.sendEvent(new PlayerCookingEvent(mainPlayer, ItemID.RAW_SHRIMP));
+        log(mainPlayer.getName()+" is using (eating) "+ ItemID.RAW_SPAGHETTI);
+        UsePlayerItemEvent useItemEvent = new UsePlayerItemEvent(mainPlayer, ItemID.RAW_SPAGHETTI);
         registry.sendEvent(useItemEvent);
-        log(mainPlayer.getName()+" has "+getItem(mainPlayer,Item.SHRIMP).getQuantity()+" "+Item.SHRIMP);
-        log(mainPlayer.getName()+" has "+getItem(mainPlayer,Item.BURNT_SHRIMP).getQuantity()+" "+Item.BURNT_SHRIMP);
+        log(mainPlayer.getName()+" has "+getItem(mainPlayer, ItemID.SHRIMP).getQuantity()+" "+ ItemID.SHRIMP);
+        log(mainPlayer.getName()+" has "+getItem(mainPlayer, ItemID.BURNT_SHRIMP).getQuantity()+" "+ ItemID.BURNT_SHRIMP);
 
         //Run those condition checks
         runChecks();
@@ -105,9 +105,9 @@ public class Assignment {
     private void runChecks() {
         if (getLevel(mainPlayer, Skill.EXPLORATION) != 1) throw new AssignmentFailed("Exploration XP should be set to level 1");
         if (getLevel(mainPlayer, Skill.CONSTRUCTION) != 2) throw new AssignmentFailed("Construction XP should be set to level 2");
-        if (getItem(someOtherPlayer, Item.COINS).getQuantity() != 1000) throw new AssignmentFailed("Player does not have 1000 coins in their inventory");
+        if (getItem(someOtherPlayer, ItemID.COINS).getQuantity() != 1000) throw new AssignmentFailed("Player does not have 1000 coins in their inventory");
         if (getLevel(mainPlayer, Skill.MINING) != 6) throw new AssignmentFailed("Mining XP should be set to level 6");
-        if (!hasItem(mainPlayer, Item.SHRIMP) || hasItem(mainPlayer, Item.BURNT_SHRIMP) ) { throw new AssignmentFailed(mainPlayer.getName()+" burnt the Shrimp!!! run this again!"); }
+        if (!hasItem(mainPlayer, ItemID.SHRIMP) || hasItem(mainPlayer, ItemID.BURNT_SHRIMP) ) { throw new AssignmentFailed(mainPlayer.getName()+" burnt the Shrimp!!! run this again!"); }
     }
 
     //Create event to get player level for specified skill
@@ -119,7 +119,7 @@ public class Assignment {
 
     //Create event to check player inventory for Item (Item name not ItemData Obj) so at least 1 will pass
     //returns the actual ItemData in slot
-    private ItemData getItem(Player player, Item item) {
+    private ItemData getItem(Player player, ItemID item) {
         GetPlayerItemEvent getPlayerItemEvent = new GetPlayerItemEvent(player, item);
         registry.sendEvent(getPlayerItemEvent);
         return new ItemData(getPlayerItemEvent.getItem(), getPlayerItemEvent.getQuantity());
@@ -127,7 +127,7 @@ public class Assignment {
 
     //Create event to check player inventory for item (Item name not ItemData Obj) so at least 1 will pass
     //returns bool with yes or no check
-    private boolean hasItem(Player player, Item item) {
+    private boolean hasItem(Player player, ItemID item) {
         GetPlayerItemEvent getPlayerItemEvent = new GetPlayerItemEvent(player, item);
         registry.sendEvent(getPlayerItemEvent);
         return getPlayerItemEvent.hasItem();

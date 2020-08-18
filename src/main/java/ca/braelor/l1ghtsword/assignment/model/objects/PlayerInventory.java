@@ -1,7 +1,8 @@
 package ca.braelor.l1ghtsword.assignment.model.objects;
 import ca.braelor.l1ghtsword.assignment.exception.ItemDoesNotExistError;
 import ca.braelor.l1ghtsword.assignment.exception.PlayerInventoryFullError;
-import ca.braelor.l1ghtsword.assignment.model.enums.Item;
+import ca.braelor.l1ghtsword.assignment.model.ItemData;
+import ca.braelor.l1ghtsword.assignment.model.enums.ItemID;
 import ca.braelor.l1ghtsword.assignment.model.enums.ItemSlot;
 
 import java.util.*;
@@ -19,33 +20,33 @@ import java.util.*;
  */
 
 public class PlayerInventory {
-    private Map<ItemSlot,ItemData> inventory;
+    private Map<ItemSlot, ItemData> inventory;
     public PlayerInventory() {
         //Initialize inventory obj with all inventory slots set to Item.Empty
         this.inventory = new EnumMap<>(ItemSlot.class);
-        EnumSet.allOf(ItemSlot.class).forEach(is -> this.inventory.put(is,new ItemData(Item.EMPTY)));
+        EnumSet.allOf(ItemSlot.class).forEach(is -> this.inventory.put(is,new ItemData(ItemID.EMPTY)));
     }
 
     //get item at inventory slot
     public ItemData getItemDataAt(ItemSlot is) { return this.inventory.get(is); }
 
     //Get First inventory slot containing Item
-    public ItemSlot getFirstItemSlot(Item i) {
+    public ItemSlot getFirstItemSlot(ItemID i) {
         for (Map.Entry<ItemSlot, ItemData> is : this.inventory.entrySet()) {
             if (is.getValue().getItem().equals(i)) { return is.getKey(); }
         }
-        if(i.equals(Item.EMPTY)) {throw new PlayerInventoryFullError();
+        if(i.equals(ItemID.EMPTY)) {throw new PlayerInventoryFullError();
         }
         else { throw new ItemDoesNotExistError(i); }
     }
 
     //get item slots for specified item
-    public List<ItemSlot> getItemSlots(Item i) {
+    public List<ItemSlot> getItemSlots(ItemID i) {
         List<ItemSlot> ItemDataAtSlots = new ArrayList<ItemSlot>();
         //for (Map.Entry<ItemSlot, ItemData> is : this.inventory.entrySet()) {
         this.inventory.forEach((is,id) ->{ if (id.getItem().equals(i)) { ItemDataAtSlots.add(is); } } );
         if(ItemDataAtSlots.isEmpty()) {
-            if(i.equals(Item.EMPTY)) {throw new PlayerInventoryFullError();
+            if(i.equals(ItemID.EMPTY)) {throw new PlayerInventoryFullError();
             } else { throw new ItemDoesNotExistError(i); }
         }
         return ItemDataAtSlots;
@@ -57,7 +58,7 @@ public class PlayerInventory {
     //Check if player has item (will return on first instance, wont always check full array)
     //Did not simply use "if(this.inventory.containsValue(id)) { return true;}" as quantity may be more then 1
     //meaning the object does not match even if the name does match. Must compare names.
-    public boolean hasItem (Item i) {
+    public boolean hasItem (ItemID i) {
         for (Map.Entry<ItemSlot, ItemData> e : this.inventory.entrySet()) {
             if (e.getValue().getItem().equals(i)) { return true; }
         }
@@ -68,7 +69,7 @@ public class PlayerInventory {
     public void setItemAt(ItemSlot is, ItemData id) { this.inventory.put(is,id); }
 
     //Set ItemData at slot to Item.EMPTY (Effectively delete)
-    public void removeItem(ItemSlot is) { this.setItemAt(is,new ItemData(Item.EMPTY)); }
+    public void removeItem(ItemSlot is) { this.setItemAt(is,new ItemData(ItemID.EMPTY)); }
 
     //UNUSED - Switch items from and to specified slots
     public void switchItemSlots(ItemSlot moveFrom, ItemSlot moveTo) {

@@ -2,7 +2,7 @@ package ca.braelor.l1ghtsword.assignment.components;
 
 import ca.braelor.l1ghtsword.assignment.events.*;
 import ca.braelor.l1ghtsword.assignment.exception.*;
-import ca.braelor.l1ghtsword.assignment.model.enums.Item;
+import ca.braelor.l1ghtsword.assignment.model.enums.ItemID;
 import ca.braelor.l1ghtsword.assignment.model.enums.Rock;
 import ca.braelor.l1ghtsword.assignment.model.objects.Ore;
 import net.gameslabs.api.Component;
@@ -40,7 +40,7 @@ public class MiningComponent extends Component {
     }
 
     private void onPlayerMining(PlayerMiningEvent e) {
-        GetPlayerItemEvent getEmpty = new GetPlayerItemEvent(e.getPlayer(),Item.EMPTY);
+        GetPlayerItemEvent getEmpty = new GetPlayerItemEvent(e.getPlayer(), ItemID.EMPTY);
         send(getEmpty);
         if(getEmpty.hasItem()) {
             GetPlayerLevelEvent pLevel = new GetPlayerLevelEvent(e.getPlayer(), Skill.MINING);
