@@ -2,109 +2,79 @@ package ca.braelor.l1ghtsword.assignment.components;
 
 import ca.braelor.l1ghtsword.assignment.events.*;
 import ca.braelor.l1ghtsword.assignment.exception.PlayerLevelTooLow;
-import ca.braelor.l1ghtsword.assignment.model.enums.ItemID;
-import ca.braelor.l1ghtsword.assignment.model.FoodData;
+import ca.braelor.l1ghtsword.assignment.interfaces.Item;
 import net.gameslabs.api.Component;
+import net.gameslabs.api.Player;
 import net.gameslabs.events.GetPlayerLevelEvent;
 import net.gameslabs.events.GiveXpEvent;
 import net.gameslabs.model.enums.Skill;
 
-import java.util.EnumSet;
-import java.util.HashMap;
 import java.util.concurrent.ThreadLocalRandom;
-
-import static ca.braelor.l1ghtsword.assignment.utils.util.isCookable;
 import static net.gameslabs.model.objects.Assignment.log;
 
 /**
- * PRIMARY REVISIONS
+ * REFACTORED
  *
- * -
+ * Removed any deprecated, hard coded logic in place of the Item interface.
  *
- * Component responsible for the cooking skill and its operations.
- * Does not check if player has space as order of operations will require a
- * cookable item exist before trying to cook it.
- * Also, checks level and cancels event if all requirements are not met
- * <p>
- * Variables such as burn chance and level requirement's are in the array of
- * Food objects. FoodItems maps Item objects to Food Objects by checking if they are cookable.
- * Iterates through Item list once on Component init, but can be referee to after load for
- * less taxing operations. Not ideal is Item list grows large but needs to be done in such a
- * way that only cookable items apply without too much Enum duplication.
+ * Will attempt to cook, cookable food.
+ * Will check if player has item, then if item is cookable, then if player has correct level.
+ * if all checks are good, will cook the food, and return a cooked or burnt item as a result.
  */
 
 public class CookingComponent extends Component {
 
-    private HashMap<ItemID, FoodData> foodItems;
-
     public CookingComponent() {
-        foodItems = new HashMap<>();
-        EnumSet.allOf(ItemID.class).forEach(i -> {
-            if (isCookable(i)) {
-                foodItems.put(i, new FoodData(i));
-            }
-        });
+
     }
 
     @Override
     public void onLoad() {
         registerEvent(PlayerCookingEvent.class, this::onPlayerCooking);
-        registerEvent(GetFoodInfoEvent.class, this::onGetFoodInfo);
     }
 
-    private void onPlayerCooking(PlayerCookingEvent e) {
-        GetPlayerItemEvent getItem = new GetPlayerItemEvent(e.getPlayer(), e.getItem());
+    private void onPlayerCooking(PlayerCookingEvent event) {
+
+        GetPlayerItemEvent getItem = new GetPlayerItemEvent(event.getPlayer(), event.getItem());
         send(getItem);
 
         if (getItem.hasItem()) {
-            if (isCookable(e.getItem())) {
-                FoodData f = getFood(e.getItem());
-                GetPlayerLevelEvent pLevel = new GetPlayerLevelEvent(e.getPlayer(), Skill.COOKING);
+            if (event.getItem().isCookable()) {
+                Item foodBeingCooked = event.getItem();
+                GetPlayerLevelEvent pLevel = new GetPlayerLevelEvent(event.getPlayer(), Skill.COOKING);
                 send(pLevel);
 
                 try {
-                    if (pLevel.getLevel() >= f.getLevel()) {
-                        log(e.getPlayer().getName() + " has high enough level, Attempting to cook " + f.getItem());
-                        if (cookFood(f.getBurnChance())) {
-                            log(e.getPlayer().getName() + " has successfully cooked " + f.getItem());
-                            send(new RemovePlayerItemEvent(e.getPlayer(), e.getItem()));
-                            send(new GivePlayerItemEvent(e.getPlayer(), f.getCooked()));
-                            log(e.getPlayer().getName() + " will receive " + f.getXp() + " XP");
-                            send(new GiveXpEvent(e.getPlayer(), Skill.COOKING, f.getXp()));
-                        } else {
-                            log(e.getPlayer().getName() + " has failed to cook " + f.getItem());
-                            send(new RemovePlayerItemEvent(e.getPlayer(), e.getItem()));
-                            send(new GivePlayerItemEvent(e.getPlayer(), f.getBurnt()));
-                        }
+                    if (pLevel.getLevel() >= foodBeingCooked.getLevelRequirement()) {
+                        log(event.getPlayer().getName() + " has high enough level, Attempting to cook " + foodBeingCooked.getItemID());
+                        attemptToCookFood(event.getPlayer(), event.getItem());
                     } else {
-                        throw new PlayerLevelTooLow(e.getPlayer(), Skill.COOKING, f.getLevel());
+                        throw new PlayerLevelTooLow(event.getPlayer(), Skill.COOKING, foodBeingCooked.getLevelRequirement());
                     }
                 } catch (PlayerLevelTooLow err) {
                     log(err.getMessage());
                 }
             } else {
-                log("Cannot cook " + e.getItem() + ". Only able to cook food...");
+                log("Cannot cook " + event.getItem() + ". Only able to cook food...");
             }
         } else {
-            log(e.getPlayer().getName() + "Does not have any " + e.getItem() + "!");
+            log(event.getPlayer().getName() + "Does not have any " + event.getItem() + "!");
         }
-        e.setCancelled(true);
+        event.setCancelled(true);
     }
 
-    private FoodData onGetFoodInfo(GetFoodInfoEvent e) {
-        return e.getFood();
-    }
-
-    private FoodData getFood(ItemID i) {
-        return foodItems.get(i);
-    }
-
-    private boolean cookFood(int foodBurnChance) {
+    private void attemptToCookFood(Player player, Item item) {
         int rng = ThreadLocalRandom.current().nextInt(1, 101);
-        if (rng > foodBurnChance) {
-            return true;
+        if (rng > item.getBurnChance()) {
+            log(player.getName() + " has successfully cooked " + item.getItemID());
+            send(new RemovePlayerItemEvent(player, item.getItemID()));
+            send(new GivePlayerItemEvent(player, item.createNewInstanceOf(item.getCookedItem())));
+            log(player.getName() + " will receive " + item.getXpAmountGiven() + " XP");
+            send(new GiveXpEvent(player, Skill.COOKING, item.getXpAmountGiven()));
         } else {
-            return false;
+            log(player.getName() + " has failed to cook " + item.getItemID());
+            send(new RemovePlayerItemEvent(player, item.getItemID()));
+            send(new GivePlayerItemEvent(player, item.createNewInstanceOf(item.getBurntItem())));
         }
     }
 

@@ -15,9 +15,9 @@ public interface Item {
 
     public int getBurnChance();
 
-    public ItemID getCookedItem();
+    public Item getCookedItem();
 
-    public ItemID getBurntItem();
+    public Item getBurntItem();
 
     public int getLevelRequirement();
 

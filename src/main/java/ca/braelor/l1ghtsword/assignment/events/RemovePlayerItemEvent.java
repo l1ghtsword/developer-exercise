@@ -12,21 +12,21 @@ import net.gameslabs.api.PlayerEvent;
  */
 
 public class RemovePlayerItemEvent extends PlayerEvent {
-    private final ItemID i;
-    private int q;
+    private final ItemID item;
+    private int quantity;
 
     public RemovePlayerItemEvent(Player player, ItemID item) {
         super(player);
-        this.i = item;
-        this.q = 1;
+        this.item = item;
+        this.quantity = 1;
     }
 
     public RemovePlayerItemEvent(Player player, ItemID item, int quantity) {
         super(player);
-        this.i = item;
-        this.q = quantity;
+        this.item = item;
+        this.quantity = quantity;
     }
 
-    public ItemID getItem() { return this.i; }
-    public int getQuantity() { return q; }
+    public ItemID getItem() { return this.item; }
+    public int getQuantity() { return quantity; }
 }

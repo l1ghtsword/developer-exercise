@@ -1,6 +1,6 @@
 package ca.braelor.l1ghtsword.assignment.events;
 
-import ca.braelor.l1ghtsword.assignment.model.enums.ItemID;
+import ca.braelor.l1ghtsword.assignment.interfaces.Item;
 import net.gameslabs.api.Player;
 import net.gameslabs.api.PlayerEvent;
 
@@ -8,17 +8,19 @@ import net.gameslabs.api.PlayerEvent;
  * Event used to request an item be cooked by player.
  * This event will not inform player success of failure, that is
  * managed by CookingComponent listeners, which will also cancel this event
- *
+ * <p>
  * Only provides player and item, one way response to listener
  */
 
 public class PlayerCookingEvent extends PlayerEvent {
-    private final ItemID i;
+    private final Item item;
 
-    public PlayerCookingEvent(Player player, ItemID item) {
+    public PlayerCookingEvent(Player player, Item item) {
         super(player);
-        this.i = item;
+        this.item = item;
     }
 
-    public ItemID getItem() { return this.i; }
+    public Item getItem() {
+        return this.item;
+    }
 }

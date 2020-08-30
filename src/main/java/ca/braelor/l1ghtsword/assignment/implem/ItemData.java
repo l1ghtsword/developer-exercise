@@ -1,4 +1,4 @@
-package ca.braelor.l1ghtsword.assignment.model;
+package ca.braelor.l1ghtsword.assignment.implem;
 
 import ca.braelor.l1ghtsword.assignment.exception.*;
 import ca.braelor.l1ghtsword.assignment.interfaces.Item;
@@ -20,8 +20,8 @@ public class ItemData implements Item {
     protected ItemID itemID;
     protected int itemQuantity;
     protected int cookBurnChance;
-    protected ItemID itemOnCookSuccess;
-    protected ItemID itemOnCookFail;
+    protected Item itemOnCookSuccess;
+    protected Item itemOnCookFail;
     protected int levelRequirement;
     protected int xpAmountGiven;
     protected String onUseProperties;
@@ -29,9 +29,9 @@ public class ItemData implements Item {
     protected boolean imUsable;
     protected boolean imCookable;
 
-    public ItemData(ItemID thisItemID) {
-        this.itemID = thisItemID;
+    public ItemData() {
         this.itemQuantity = 1;
+        this.onUseProperties="";
     }
 
     public ItemID getItemID() {
@@ -80,11 +80,11 @@ public class ItemData implements Item {
         return this.cookBurnChance;
     }
 
-    public ItemID getCookedItem() {
+    public Item getCookedItem() {
         return this.itemOnCookSuccess;
     }
 
-    public ItemID getBurntItem() {
+    public Item getBurntItem() {
         return this.itemOnCookFail;
     }
 
@@ -96,9 +96,7 @@ public class ItemData implements Item {
         return this.xpAmountGiven;
     }
 
-    public String getUseProperties() {
-        return this.onUseProperties;
-    }
+    public String getUseProperties() { return this.onUseProperties; }
 
     public boolean isStackable() {
         return this.imStackable;
@@ -113,7 +111,7 @@ public class ItemData implements Item {
     }
 
     /*
-    Clearly i ddi not come up with on my own... stacktrace reference here https://stackoverflow.com/questions/7495785/java-how-to-instantiate-a-class-from-string
+    Clearly i did not come up with on my own... stacktrace reference here https://stackoverflow.com/questions/7495785/java-how-to-instantiate-a-class-from-string
     I needed a way to on the fly create a object instance of ItemData subclasses on the fly, but was stuck with initialization errors as i cant know the correct subclass.
 
     item.getClass().getName() should get the correct class name in the form of a String argument.
@@ -129,16 +127,20 @@ public class ItemData implements Item {
         try {
             //Use reflection to get the class from the existing class name as a string
             Class<?> thisClass = Class.forName(item.getClass().getName());
-            //Get types in the form of an array of Objects to feed to the constructor creation
+            //Get types in the form of an array of Classes to feed to the constructor creation
             Class<?>[] types = {Double.TYPE, thisClass};
             //Create the constructor using the Class String and the assembled types
             Constructor<?> constructor = thisClass.getConstructor(types);
-
-            Object[] parameters = {(double) 0, Class.forName(item.getClass().getName())};
+            //get Object parameters to feed to the constructor when initializing the new object
+            Object[] parameters = {(double) 0, thisClass};
+            //gib's Item cast object we created
             return (Item) constructor.newInstance(parameters);
-        } catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException error) {
-            log(error.getMessage());
-            //returns empty to prevent hard crash/ fix compiler ambiguity...
+        }
+        catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException error) {
+            log("Bad thing habbon :( \n" + error.getMessage() + "\n");
+            error.printStackTrace();
+            log("\n\n");
+            //returns empty to prevent hard crash/ fix compiler ambiguity... Should never be reached unless bad thing habbon :(
             return new Empty();
         }
     }

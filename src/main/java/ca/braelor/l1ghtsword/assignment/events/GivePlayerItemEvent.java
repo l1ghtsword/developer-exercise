@@ -27,6 +27,13 @@ public class GivePlayerItemEvent extends PlayerEvent {
         this.giveThisQuantity = item.getQuantity();
     }
 
+    public GivePlayerItemEvent(Player player, Item item, int quantity) {
+        super(player);
+        this.giveThisItem = item;
+        this.giveThisItemID = item.getItemID();
+        this.giveThisQuantity = quantity;
+    }
+
     public Item getItemBeingGiven() {
         return this.giveThisItem;
     }

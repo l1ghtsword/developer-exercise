@@ -2,9 +2,11 @@ package ca.braelor.l1ghtsword.assignment.components;
 
 import ca.braelor.l1ghtsword.assignment.events.*;
 import ca.braelor.l1ghtsword.assignment.exception.*;
+import ca.braelor.l1ghtsword.assignment.interfaces.Item;
 import ca.braelor.l1ghtsword.assignment.model.enums.ItemID;
 import ca.braelor.l1ghtsword.assignment.model.enums.Rock;
-import ca.braelor.l1ghtsword.assignment.model.objects.Ore;
+import ca.braelor.l1ghtsword.assignment.model.objects.items.Empty;
+import ca.braelor.l1ghtsword.assignment.model.objects.items.ores.*;
 import net.gameslabs.api.Component;
 import net.gameslabs.events.GetPlayerLevelEvent;
 import net.gameslabs.events.GiveXpEvent;
@@ -20,57 +22,81 @@ import static net.gameslabs.model.objects.Assignment.log;
  * The main responsibility of this component is mapping Rock types to Ore Obj.
  * Based on the Ore, a mining event listener will check player level and provide
  * player with Ore and Xp for successfully mining a rock.
- *
- *Will check if player inventory is full (if it has Item.EMPTY in a slot) and
+ * <p>
+ * Will check if player inventory is full (if it has Item.EMPTY in a slot) and
  * cancel the event if there is no room.
  */
 
 public class MiningComponent extends Component {
 
-    private HashMap<Rock, Ore> ores;
+    private HashMap<Rock, Item> ores;
+
     public MiningComponent() {
         ores = new HashMap<>();
-        EnumSet.allOf(Rock.class).forEach(r -> ores.put(r,new Ore(r)));
+        //Set aside static map of Item objects to perform checks and create new instances of later
+        EnumSet.allOf(Rock.class).forEach(r -> ores.put(r, mapRockToOreItem(r)));
     }
 
     @Override
     public void onLoad() {
         registerEvent(PlayerMiningEvent.class, this::onPlayerMining);
-        registerEvent(GetOreInfoEvent.class, this::onGetOreInfo);
     }
 
-    private void onPlayerMining(PlayerMiningEvent e) {
-        GetPlayerItemEvent getEmpty = new GetPlayerItemEvent(e.getPlayer(), ItemID.EMPTY);
+    private void onPlayerMining(PlayerMiningEvent event) {
+        GetPlayerItemEvent getEmpty = new GetPlayerItemEvent(event.getPlayer(), new Empty());
         send(getEmpty);
-        if(getEmpty.hasItem()) {
-            GetPlayerLevelEvent pLevel = new GetPlayerLevelEvent(e.getPlayer(), Skill.MINING);
+
+        if (getEmpty.hasItem()) {
+            GetPlayerLevelEvent pLevel = new GetPlayerLevelEvent(event.getPlayer(), Skill.MINING);
             send(pLevel);
-            Ore o = getOre(e.getRock());
+            //Use list of Valid Ores as we only know what rock is being mined
+            Item oreBeingHarvested = ores.get(event.getRock());
 
             try {
-                if (pLevel.getLevel() >= o.getLevel()) {
-                    log(e.getPlayer().getName() + " has high enough level, giving 1x " + o.getItem());
-                    send(new GivePlayerItemEvent(e.getPlayer(), o.getItem()));
-                    log(e.getPlayer().getName() + " will receive " + o.getXp() + " XP");
-                    send(new GiveXpEvent(e.getPlayer(), Skill.MINING, o.getXp()));
+                if (pLevel.getLevel() >= oreBeingHarvested.getLevelRequirement()) {
+                    log(event.getPlayer().getName() + " has high enough level, giving 1x " + oreBeingHarvested.getItemID());
+                    send(new GivePlayerItemEvent(event.getPlayer(), oreBeingHarvested.createNewInstanceOf(oreBeingHarvested)));
+                    log(event.getPlayer().getName() + " will receive " + oreBeingHarvested.getXpAmountGiven() + " XP");
+                    send(new GiveXpEvent(event.getPlayer(), Skill.MINING, oreBeingHarvested.getXpAmountGiven()));
                 } else {
-                    throw new PlayerLevelTooLow(e.getPlayer(), Skill.MINING, o.getLevel());
+                    throw new PlayerLevelTooLow(event.getPlayer(), Skill.MINING, oreBeingHarvested.getLevelRequirement());
                 }
             } catch (PlayerLevelTooLow err) {
                 log(err.getMessage());
             }
-        } else { log("Player inventory is full!"); }
-        e.setCancelled(true);
+        } else {
+            log("Player inventory is full!");
+        }
+        event.setCancelled(true);
     }
 
-    private Ore onGetOreInfo(GetOreInfoEvent e){
-        return e.getOre();
+    private Item mapRockToOreItem(Rock rock) {
+        if (rock.equals(Rock.TIN)) {
+            return new Tin_ore();
+        } else if (rock.equals(Rock.COPPER)) {
+            return new Copper_ore();
+        } else if (rock.equals(Rock.IRON)) {
+            return new Iron_ore();
+        } else if (rock.equals(Rock.SILVER)) {
+            return new Silver_ore();
+        } else if (rock.equals(Rock.COAL)) {
+            return new Coal_ore();
+        } else if (rock.equals(Rock.GOLD)) {
+            return new Gold_ore();
+        } else if (rock.equals(Rock.MITHRIL)) {
+            return new Mithril_ore();
+        } else if (rock.equals(Rock.ADAMANTITE)) {
+            return new Adamantite_ore();
+        } else if (rock.equals(Rock.RUNITE)) {
+            return new Runite_ore();
+        }
+        //Only happens if ore class doesn't exist
+        log("ERROR: Ore Item not found for " + rock);
+        return new Empty();
     }
-
-    private Ore getOre(Rock r) { return ores.get(r); }
 
     @Override
     public void onUnload() {
-        // Nothing to do
+        ores.clear();
     }
 }

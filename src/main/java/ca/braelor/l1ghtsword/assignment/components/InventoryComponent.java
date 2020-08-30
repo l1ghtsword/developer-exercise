@@ -6,18 +6,12 @@ import ca.braelor.l1ghtsword.assignment.events.RemovePlayerItemEvent;
 import ca.braelor.l1ghtsword.assignment.events.UsePlayerItemEvent;
 import ca.braelor.l1ghtsword.assignment.exception.*;
 import ca.braelor.l1ghtsword.assignment.interfaces.Item;
-import ca.braelor.l1ghtsword.assignment.model.ItemData;
 import ca.braelor.l1ghtsword.assignment.model.enums.ItemID;
 import ca.braelor.l1ghtsword.assignment.model.enums.ItemSlot;
-import ca.braelor.l1ghtsword.assignment.model.UsableData;
-import ca.braelor.l1ghtsword.assignment.utils.util;
-import com.sun.org.apache.bcel.internal.generic.INSTANCEOF;
 import net.gameslabs.api.Component;
 import net.gameslabs.api.Player;
 import ca.braelor.l1ghtsword.assignment.model.objects.PlayerInventory;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.IntStream;
@@ -84,10 +78,10 @@ public class InventoryComponent extends Component {
 
     private void onGetPlayerItem(GetPlayerItemEvent event) {
         PlayerInventory inventory = this.getInventory(event.getPlayer());
-        ItemID itemID = event.getItem();
+        Item item = event.getItem();
 
-        if (inventory.hasItem(itemID)) {
-            event.setQuantity(getPlayerItemAmount(inventory, itemID));
+        if (inventory.hasItem(item.getItemID())) {
+            event.setQuantity(getPlayerInventoryTotalItemCount(inventory, item.getItemID()));
             event.setHasItem(true);
         } else {
             event.setHasItem(false);
@@ -97,16 +91,16 @@ public class InventoryComponent extends Component {
 
     private void onRemovePlayerItem(RemovePlayerItemEvent e) {
         PlayerInventory inventory = this.getInventory(e.getPlayer());
-        ItemID i = e.getItem();
-        int q = e.getQuantity();
+        ItemID item = e.getItem();
+        int quantity = e.getQuantity();
 
         try {
-            if (inventory.hasItem(i)) {
-                if (!removePlayerItemStacks(inventory, i, q)) {
-                    throw new NotEnoughItemsInPlayerInventory(i, q);
+            if (inventory.hasItem(item)) {
+                if (!removePlayerItemStacks(inventory, item, quantity)) {
+                    throw new NotEnoughItemsInPlayerInventory(item, quantity);
                 }
             } else {
-                throw new ItemDoesNotExistError(i);
+                throw new ItemDoesNotExistError(item);
             }
         } catch (ItemDoesNotExistError | NotEnoughItemsInPlayerInventory err) {
             log(err.getMessage());
@@ -116,13 +110,12 @@ public class InventoryComponent extends Component {
 
     private void onUsePlayerItem(UsePlayerItemEvent e) {
         PlayerInventory inventory = this.getInventory(e.getPlayer());
-        ItemID i = e.getItem();
-        int q = e.getQuantity();
+        Item item = e.getItem();
 
-        if (inventory.hasItem(i)) {
-            if (isUsable(i)) {
+        if (inventory.hasItem(item.getItemID())) {
+            if (item.isUsable()) {
                 try {
-                    useItem(inventory, i, 1);
+                    useItem(inventory, item);
                 } catch (ItemNotUsableError err) {
                     log(err.getMessage());
                 }
@@ -130,7 +123,7 @@ public class InventoryComponent extends Component {
                 log(e.getItem() + " is not an item that can be used");
             }
         } else {
-            log(e.getPlayer() + " does not have " + q + "x " + i + " to use!");
+            log(e.getPlayer() + " does not have any " + item.getItemID() + " to use!");
         }
         e.setCancelled(true);
     }
@@ -166,81 +159,67 @@ public class InventoryComponent extends Component {
             } else {
                 throw new NotEnoughInventorySpaceError();
             }
-        } catch (NoSpaceInPlayerInventoryError | NotEnoughInventorySpaceError err) {
-            log(err.getMessage());
+        } catch (NoSpaceInPlayerInventoryError | NotEnoughInventorySpaceError error) {
+            log(error.getMessage());
         }
     }
 
-    private int getPlayerItemAmount(PlayerInventory inventory, ItemID i) {
-        int q = 0;
+    private int getPlayerInventoryTotalItemCount(PlayerInventory inventory, ItemID itemID) {
+        int quantityTotalCount = 0;
         try {
-            for (ItemSlot is : inventory.getItemSlots(i)) {
-                if (inventory.getItemDataAt(is).getItem().equals(i)) {
-                    q += inventory.getItemDataAt(is).getQuantity();
+            for (ItemSlot is : inventory.getItemSlots(itemID)) {
+                if (inventory.getItemAt(is).getItemID().equals(itemID)) {
+                    quantityTotalCount += inventory.getItemAt(is).getQuantity();
                 }
             }
         } catch (ItemDoesNotExistError err) {
             log(err.getMessage());
         }
-        return q;
+        return quantityTotalCount;
     }
 
-    private boolean removePlayerItemStacks(PlayerInventory inventory, ItemID i, int q) {
+    private boolean removePlayerItemStacks(PlayerInventory inventory, ItemID itemID, int removeQuantity) {
         List<ItemSlot> slots;
+        int currentItemSlotQuantity;
         try {
-            slots = inventory.getItemSlots(i);
-            if (util.isStackable(i)) {
-                if (slots.size() == 1) {
-                    int iq = inventory.getItemDataAt(slots.get(0)).getQuantity();
-                    if (iq > q) {
-                        inventory.getItemDataAt(slots.get(0)).subQuantity(q);
-                    } else if (iq == q) {
-                        inventory.removeItem(slots.get(0));
-                    } else {
-                        throw new NotEnoughItemsInPlayerInventory(i, q);
+            slots = inventory.getItemSlots(itemID);
+
+            if ((!slots.isEmpty()) && !(getPlayerInventoryTotalItemCount(inventory, itemID) < removeQuantity))
+                for (ItemSlot slot : slots) {
+                    //Exit loop as amount has been removed. (complete check)
+                    if (removeQuantity <= 0) {
+                        return true;
                     }
 
-                } else {
-                    if (getPlayerItemAmount(inventory, i) >= q) {
-                        for (ItemSlot slot : slots) {
-                            if (q <= 0) {
-                                return true;
-                            }
-                            int iq = inventory.getItemDataAt(slot).getQuantity();
-                            if (iq > q) {
-                                inventory.getItemDataAt(slots.get(0)).subQuantity(q);
-                                q = 0;
-                            } else {
-                                inventory.removeItem(slots.get(0));
-                                q -= iq;
-                            }
-                        }
-                    } else {
-                        throw new NotEnoughItemsInPlayerInventory(i, q);
+                    //set current itemstack amount in array (Run after completed check to save processing)
+                    currentItemSlotQuantity = inventory.getItemAt(slot).getQuantity();
+
+                    //Item stack has enough to complete remove transaction, end loop here
+                    if (currentItemSlotQuantity > removeQuantity) {
+                        inventory.getItemAt(slot).subQuantity(removeQuantity);
+                        return true;
                     }
-                }
-            } else {
-                if (slots.size() >= q) {
-                    for (ItemSlot slot : slots) {
+                    //delete itemstack, keep going
+                    else {
                         inventory.removeItem(slot);
                     }
-                } else {
-                    throw new NotEnoughItemsInPlayerInventory(i, q);
+                    removeQuantity -= currentItemSlotQuantity;
                 }
+            else {
+                throw new NotEnoughItemsInPlayerInventory(itemID, removeQuantity);
             }
-            return true;
         } catch (ItemDoesNotExistError | NotEnoughItemsInPlayerInventory | SubtractionError err) {
             log(err.getMessage());
-            return false;
         }
+        return false;
     }
 
-    private void useItem(PlayerInventory inventory, ItemID i, int q) {
-        if (isUsable(i)) {
-            log(new UsableData(i).getProperties());
-            removePlayerItemStacks(inventory, i, q);
+    private void useItem(PlayerInventory inventory, Item item) {
+        if (item.isUsable()) {
+            log(item.getUseProperties());
+            removePlayerItemStacks(inventory, item.getItemID(),1);
         } else {
-            throw new ItemNotUsableError(i);
+            throw new ItemNotUsableError(item.getItemID());
         }
     }
 
