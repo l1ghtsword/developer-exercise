@@ -4,6 +4,7 @@ import ca.braelor.l1ghtsword.assignment.exception.*;
 import ca.braelor.l1ghtsword.assignment.interfaces.Item;
 import ca.braelor.l1ghtsword.assignment.model.enums.ItemID;
 import ca.braelor.l1ghtsword.assignment.model.objects.items.Empty;
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -17,6 +18,7 @@ import static net.gameslabs.model.objects.Assignment.log;
 
 public class ItemData implements Item {
 
+    protected String className;
     protected ItemID itemID;
     protected int itemQuantity;
     protected int cookBurnChance;
@@ -122,17 +124,27 @@ public class ItemData implements Item {
     but for now i settled for reflection as its easier. Though im aware, slower.
     Additionally, there are limitations to requiring the same Item subclass as opposed to just an ID that im also aware of,
     but i do not reach those limitations in this example.
+
+    This broke quite a bit initially, i had to refactor it a few times to get everything correct... Im really glad i got this working, but im sure it could be better.
      */
     public Item createNewInstanceOf(Item item) {
+        return instanceGenerator(item.getClass().getName());
+    }
+
+    //Doesn't work, unable to get fully qualified Class name in this manner,
+    @Deprecated public Item createNewInstanceOf(ItemID itemID) {
+        String itemClassName = itemID.toString();
+        return instanceGenerator(itemClassName.substring(0, 1)+itemClassName.substring(1).toLowerCase());
+    }
+
+    private Item instanceGenerator(String nameOfClass){
         try {
             //Use reflection to get the class from the existing class name as a string
-            Class<?> thisClass = Class.forName(item.getClass().getName());
-            //Get types in the form of an array of Classes to feed to the constructor creation
-            Class<?>[] types = {Double.TYPE, thisClass};
+            Class thisClass = Class.forName(nameOfClass);
             //Create the constructor using the Class String and the assembled types
-            Constructor<?> constructor = thisClass.getConstructor(types);
+            Constructor constructor = thisClass.getConstructor();
             //get Object parameters to feed to the constructor when initializing the new object
-            Object[] parameters = {(double) 0, thisClass};
+            Object[] parameters = thisClass.getTypeParameters();
             //gib's Item cast object we created
             return (Item) constructor.newInstance(parameters);
         }

@@ -43,10 +43,10 @@ public class Assignment {
 
     public final void run() {
 
-        Item coins = new Coins();
-        Item fish = new Fish();
         Item raw_shrimp = new Raw_shrimp();
         Item raw_spaghetti = new Raw_spaghetti();
+        Item coins = new Coins();
+        Item fish = new Fish();
 
         //Player stats system checks
         log("Sending xp event for Exploration to "+mainPlayer.getName()+". Level is "+getLevel(mainPlayer, Skill.EXPLORATION));
@@ -60,7 +60,7 @@ public class Assignment {
         //Player inventory system checks (Flexible with stackable and unstackable items)
         log("Giving "+someOtherPlayer.getName()+" 2000 coins!");
         registry.sendEvent(new GivePlayerItemEvent(someOtherPlayer, new Coins(2000)));
-        Item item = getItem(someOtherPlayer, coins);
+        Item item = getItem(someOtherPlayer, new Coins());
         log(someOtherPlayer.getName() + " Has "+item.getQuantity()+" "+item.getItemID()+" in their Inventory");
         log("Removing 1000 coins!");
         registry.sendEvent(new RemovePlayerItemEvent(someOtherPlayer, ItemID.COINS,1000));
@@ -90,17 +90,21 @@ public class Assignment {
         registry.sendEvent(new GivePlayerItemEvent(mainPlayer, raw_shrimp));
         registry.sendEvent(new GivePlayerItemEvent(mainPlayer, raw_spaghetti));
         log(mainPlayer.getName()+" has level "+getLevel(mainPlayer, Skill.COOKING)+" in cooking");
-        log(mainPlayer.getName()+" is cooking "+ raw_shrimp);
+
+        log(mainPlayer.getName()+" is cooking "+ raw_shrimp.getItemID());
         registry.sendEvent(new PlayerCookingEvent(mainPlayer, raw_shrimp));
-        log(mainPlayer.getName()+" is cooking "+ raw_spaghetti);
+
+        log(mainPlayer.getName()+" is cooking "+ raw_spaghetti.getItemID());
         registry.sendEvent(new PlayerCookingEvent(mainPlayer, raw_spaghetti));
-        log(mainPlayer.getName()+" is cooking "+ raw_shrimp);
+
+        log(mainPlayer.getName()+" is cooking "+ raw_shrimp.getItemID());
         registry.sendEvent(new PlayerCookingEvent(mainPlayer, raw_shrimp));
-        log(mainPlayer.getName()+" is using (eating) "+ raw_spaghetti);
+
+        log(mainPlayer.getName()+" is using (eating) "+ raw_spaghetti.getItemID());
         UsePlayerItemEvent useItemEvent = new UsePlayerItemEvent(mainPlayer, raw_spaghetti);
         registry.sendEvent(useItemEvent);
-        log(mainPlayer.getName()+" has "+getItem(mainPlayer, raw_shrimp.getCookedItem()).getQuantity()+" "+ ItemID.SHRIMP);
-        log(mainPlayer.getName()+" has "+getItem(mainPlayer, raw_shrimp.getBurntItem()).getQuantity()+" "+ ItemID.BURNT_SHRIMP);
+        log(mainPlayer.getName()+" has "+getItem(mainPlayer, new Shrimp())+" "+ ItemID.SHRIMP);
+        log(mainPlayer.getName()+" has "+getItem(mainPlayer, new Burnt_shrimp())+" "+ ItemID.BURNT_SHRIMP);
 
         //Run those condition checks
         runChecks();
@@ -130,9 +134,11 @@ public class Assignment {
     private Item getItem(Player player, Item item) {
         GetPlayerItemEvent getPlayerItemEvent = new GetPlayerItemEvent(player, item);
         registry.sendEvent(getPlayerItemEvent);
-        Item returnItem = item.createNewInstanceOf(item);
-        returnItem.setQuantity(getPlayerItemEvent.getQuantity());
-        return returnItem;
+        if(getPlayerItemEvent.hasItem()) {
+            return getPlayerItemEvent.getItem();
+        }
+        item.setQuantity(0);
+        return item;
     }
 
     //Create event to check player inventory for item (Item name not ItemData Obj) so at least 1 will pass

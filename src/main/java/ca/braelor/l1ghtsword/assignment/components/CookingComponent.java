@@ -46,7 +46,7 @@ public class CookingComponent extends Component {
 
                 try {
                     if (pLevel.getLevel() >= foodBeingCooked.getLevelRequirement()) {
-                        log(event.getPlayer().getName() + " has high enough level, Attempting to cook " + foodBeingCooked.getItemID());
+                        log(event.getPlayer().getName() + " has high enough level, Attempting to cook " + event.getItemID());
                         attemptToCookFood(event.getPlayer(), event.getItem());
                     } else {
                         throw new PlayerLevelTooLow(event.getPlayer(), Skill.COOKING, foodBeingCooked.getLevelRequirement());
@@ -55,27 +55,28 @@ public class CookingComponent extends Component {
                     log(err.getMessage());
                 }
             } else {
-                log("Cannot cook " + event.getItem() + ". Only able to cook food...");
+                log("Cannot cook " + event.getItemID() + ". Only able to cook food...");
             }
         } else {
-            log(event.getPlayer().getName() + "Does not have any " + event.getItem() + "!");
+            log(event.getPlayer().getName() + "Does not have any " + event.getItemID() + "!");
         }
         event.setCancelled(true);
     }
 
     private void attemptToCookFood(Player player, Item item) {
         int rng = ThreadLocalRandom.current().nextInt(1, 101);
-        if (rng > item.getBurnChance()) {
+        if (rng >= (item.getBurnChance())) {
             log(player.getName() + " has successfully cooked " + item.getItemID());
             send(new RemovePlayerItemEvent(player, item.getItemID()));
             send(new GivePlayerItemEvent(player, item.createNewInstanceOf(item.getCookedItem())));
             log(player.getName() + " will receive " + item.getXpAmountGiven() + " XP");
             send(new GiveXpEvent(player, Skill.COOKING, item.getXpAmountGiven()));
-        } else {
-            log(player.getName() + " has failed to cook " + item.getItemID());
-            send(new RemovePlayerItemEvent(player, item.getItemID()));
-            send(new GivePlayerItemEvent(player, item.createNewInstanceOf(item.getBurntItem())));
+            return;
         }
+
+        log(player.getName() + " has failed to cook " + item.getItemID());
+        send(new RemovePlayerItemEvent(player, item.getItemID()));
+        send(new GivePlayerItemEvent(player, item.createNewInstanceOf(item.getBurntItem())));
     }
 
     @Override

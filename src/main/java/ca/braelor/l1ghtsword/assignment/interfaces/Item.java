@@ -32,4 +32,6 @@ public interface Item {
     boolean isCookable();
 
     Item createNewInstanceOf (Item item);
+
+    @Deprecated Item createNewInstanceOf (ItemID item);
 }

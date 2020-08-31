@@ -16,33 +16,36 @@ import net.gameslabs.api.PlayerEvent;
 
 public class GetPlayerItemEvent extends PlayerEvent {
     private Item item;
-    private ItemID itemID;
+    private int totalInventoryItemAmount;
     private boolean hasItem;
 
     public GetPlayerItemEvent(Player player, Item item) {
         super(player);
         this.item = item;
-        this.itemID = this.item.getItemID();
     }
 
     public Item getItem() {
         return this.item;
     }
 
-    public ItemID getItemID() {
-        return this.itemID;
+    public void setItem(Item collectedItem) {
+        this.item = collectedItem;
     }
 
-    public int getQuantity() {
+    public ItemID getItemID() {
+        return this.item.getItemID();
+    }
+
+    public int getTotalQuantity() {
         return this.item.getQuantity();
+    }
+
+    public void setTotalQuantity(int totalInventoryItemAmount) {
+        this.totalInventoryItemAmount = totalInventoryItemAmount;
     }
 
     public boolean hasItem() {
         return this.hasItem;
-    }
-
-    public void setQuantity(int newQuantity) {
-        this.item.setQuantity(newQuantity);
     }
 
     public void setHasItem(boolean doesPlayerHaveItem) {

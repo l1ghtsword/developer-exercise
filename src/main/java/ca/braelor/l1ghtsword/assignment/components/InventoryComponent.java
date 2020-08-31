@@ -80,13 +80,13 @@ public class InventoryComponent extends Component {
         PlayerInventory inventory = this.getInventory(event.getPlayer());
         Item item = event.getItem();
 
-        if (inventory.hasItem(item.getItemID())) {
-            event.setQuantity(getPlayerInventoryTotalItemCount(inventory, item.getItemID()));
-            event.setHasItem(true);
-        } else {
+        if (!inventory.hasItem(item.getItemID())) {
             event.setHasItem(false);
         }
-        event.setCancelled(true);
+
+        event.setTotalQuantity(getPlayerInventoryTotalItemCount(inventory, item.getItemID()));
+        event.setItem(inventory.getItemAt(inventory.getFirstItemSlot(item.getItemID())));
+        event.setHasItem(true);
     }
 
     private void onRemovePlayerItem(RemovePlayerItemEvent e) {
@@ -217,7 +217,7 @@ public class InventoryComponent extends Component {
     private void useItem(PlayerInventory inventory, Item item) {
         if (item.isUsable()) {
             log(item.getUseProperties());
-            removePlayerItemStacks(inventory, item.getItemID(),1);
+            removePlayerItemStacks(inventory, item.getItemID(), 1);
         } else {
             throw new ItemNotUsableError(item.getItemID());
         }
