@@ -7,7 +7,7 @@ import net.gameslabs.api.PlayerEvent;
 /**
  * Event used by InventoryComponent to request an item be removed from
  * player inventory. Only provides information to requesting listener
- *
+ * <p>
  * Event is canceled by InventoryComponent on success of failure
  */
 
@@ -27,6 +27,11 @@ public class RemovePlayerItemEvent extends PlayerEvent {
         this.quantity = quantity;
     }
 
-    public ItemID getItem() { return this.item; }
-    public int getQuantity() { return quantity; }
+    public ItemID getItem() {
+        return this.item;
+    }
+
+    public int getQuantity() {
+        return quantity;
+    }
 }

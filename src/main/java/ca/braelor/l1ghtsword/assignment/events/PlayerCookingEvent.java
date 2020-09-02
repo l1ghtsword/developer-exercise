@@ -26,6 +26,7 @@ public class PlayerCookingEvent extends PlayerEvent {
     public Item getItem() {
         return this.item;
     }
+
     public ItemID getItemID() {
         return this.itemID;
     }

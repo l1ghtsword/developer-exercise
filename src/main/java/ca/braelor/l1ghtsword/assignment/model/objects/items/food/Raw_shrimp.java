@@ -6,7 +6,7 @@ import ca.braelor.l1ghtsword.assignment.model.objects.FoodItem;
 public class Raw_shrimp extends FoodItem {
 
     public Raw_shrimp() {
-        this.itemID=ItemID.RAW_SHRIMP;
+        this.itemID = ItemID.RAW_SHRIMP;
         this.cookBurnChance = 10;
         this.itemOnCookSuccess = new Shrimp();
         this.itemOnCookFail = new Burnt_shrimp();

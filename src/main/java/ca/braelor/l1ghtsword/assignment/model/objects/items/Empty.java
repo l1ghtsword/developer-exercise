@@ -5,6 +5,7 @@ import ca.braelor.l1ghtsword.assignment.model.enums.ItemID;
 
 public class Empty extends ItemData {
     public Empty() {
-        this.itemID=ItemID.EMPTY;
+        this.itemID = ItemID.EMPTY;
+        this.itemQuantity = 0;
     }
 }

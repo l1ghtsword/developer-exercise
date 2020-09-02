@@ -18,8 +18,8 @@ public class MyXPBoosterComponent extends Component {
     }
 
     private void onGiveXP(GiveXpEvent e) {
-        if(e.getSkill() == Skill.CONSTRUCTION){
-            e.setXp((e.getXp()*2));
+        if (e.getSkill() == Skill.CONSTRUCTION) {
+            e.setXp((e.getXp() * 2));
             Assignment.log("DOUBLE XP!!!");
         }
     }

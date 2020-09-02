@@ -80,19 +80,28 @@ public class InventoryComponent extends Component {
         PlayerInventory inventory = this.getInventory(event.getPlayer());
         Item item = event.getItem();
 
+        //Does not have Item
         if (!inventory.hasItem(item.getItemID())) {
             event.setHasItem(false);
+            event.setTotalQuantity(0);
+            event.getItem().setQuantity(0);
+            return;
         }
 
-        event.setTotalQuantity(getPlayerInventoryTotalItemCount(inventory, item.getItemID()));
-        event.setItem(inventory.getItemAt(inventory.getFirstItemSlot(item.getItemID())));
+        //has item
+        try {
+            event.setTotalQuantity(getPlayerInventoryTotalItemCount(inventory, item.getItemID()));
+            event.getItem().setQuantity(event.getTotalQuantity());
+        } catch (ItemDoesNotExistError | NoSpaceInPlayerInventoryError error) {
+            log(error.getMessage());
+        }
         event.setHasItem(true);
     }
 
-    private void onRemovePlayerItem(RemovePlayerItemEvent e) {
-        PlayerInventory inventory = this.getInventory(e.getPlayer());
-        ItemID item = e.getItem();
-        int quantity = e.getQuantity();
+    private void onRemovePlayerItem(RemovePlayerItemEvent event) {
+        PlayerInventory inventory = this.getInventory(event.getPlayer());
+        ItemID item = event.getItem();
+        int quantity = event.getQuantity();
 
         try {
             if (inventory.hasItem(item)) {
@@ -105,12 +114,12 @@ public class InventoryComponent extends Component {
         } catch (ItemDoesNotExistError | NotEnoughItemsInPlayerInventory err) {
             log(err.getMessage());
         }
-        e.setCancelled(true);
+        event.setCancelled(true);
     }
 
-    private void onUsePlayerItem(UsePlayerItemEvent e) {
-        PlayerInventory inventory = this.getInventory(e.getPlayer());
-        Item item = e.getItem();
+    private void onUsePlayerItem(UsePlayerItemEvent event) {
+        PlayerInventory inventory = this.getInventory(event.getPlayer());
+        Item item = event.getItem();
 
         if (inventory.hasItem(item.getItemID())) {
             if (item.isUsable()) {
@@ -120,12 +129,12 @@ public class InventoryComponent extends Component {
                     log(err.getMessage());
                 }
             } else {
-                log(e.getItem() + " is not an item that can be used");
+                log(event.getItem() + " is not an item that can be used");
             }
         } else {
-            log(e.getPlayer() + " does not have any " + item.getItemID() + " to use!");
+            log(event.getPlayer() + " does not have any " + item.getItemID() + " to use!");
         }
-        e.setCancelled(true);
+        event.setCancelled(true);
     }
 
     private boolean addToItemStackAtItemSlot(PlayerInventory inventory, ItemID itemID, int quantity) {
@@ -172,8 +181,8 @@ public class InventoryComponent extends Component {
                     quantityTotalCount += inventory.getItemAt(is).getQuantity();
                 }
             }
-        } catch (ItemDoesNotExistError err) {
-            log(err.getMessage());
+        } catch (ItemDoesNotExistError error) {
+            log(error.getMessage());
         }
         return quantityTotalCount;
     }

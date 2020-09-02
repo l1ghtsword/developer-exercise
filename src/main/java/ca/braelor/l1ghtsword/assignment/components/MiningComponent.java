@@ -3,7 +3,6 @@ package ca.braelor.l1ghtsword.assignment.components;
 import ca.braelor.l1ghtsword.assignment.events.*;
 import ca.braelor.l1ghtsword.assignment.exception.*;
 import ca.braelor.l1ghtsword.assignment.interfaces.Item;
-import ca.braelor.l1ghtsword.assignment.model.enums.ItemID;
 import ca.braelor.l1ghtsword.assignment.model.enums.Rock;
 import ca.braelor.l1ghtsword.assignment.model.objects.items.Empty;
 import ca.braelor.l1ghtsword.assignment.model.objects.items.ores.*;
@@ -71,28 +70,29 @@ public class MiningComponent extends Component {
     }
 
     private Item mapRockToOreItem(Rock rock) {
-        if (rock.equals(Rock.TIN)) {
-            return new Tin_ore();
-        } else if (rock.equals(Rock.COPPER)) {
-            return new Copper_ore();
-        } else if (rock.equals(Rock.IRON)) {
-            return new Iron_ore();
-        } else if (rock.equals(Rock.SILVER)) {
-            return new Silver_ore();
-        } else if (rock.equals(Rock.COAL)) {
-            return new Coal_ore();
-        } else if (rock.equals(Rock.GOLD)) {
-            return new Gold_ore();
-        } else if (rock.equals(Rock.MITHRIL)) {
-            return new Mithril_ore();
-        } else if (rock.equals(Rock.ADAMANTITE)) {
-            return new Adamantite_ore();
-        } else if (rock.equals(Rock.RUNITE)) {
-            return new Runite_ore();
+        switch (rock) {
+            case TIN:
+                return new Tin_ore();
+            case COPPER:
+                return new Copper_ore();
+            case IRON:
+                return new Iron_ore();
+            case SILVER:
+                return new Silver_ore();
+            case COAL:
+                return new Coal_ore();
+            case GOLD:
+                return new Gold_ore();
+            case MITHRIL:
+                return new Mithril_ore();
+            case ADAMANTITE:
+                return new Adamantite_ore();
+            case RUNITE:
+                return new Runite_ore();
+            default:
+                log("ERROR: Ore Item not found for " + rock);
+                return new Empty();
         }
-        //Only happens if ore class doesn't exist
-        log("ERROR: Ore Item not found for " + rock);
-        return new Empty();
     }
 
     @Override

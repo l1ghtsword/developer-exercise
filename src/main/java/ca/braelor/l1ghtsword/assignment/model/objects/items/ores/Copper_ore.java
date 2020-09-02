@@ -8,6 +8,6 @@ public class Copper_ore extends ItemData {
     public Copper_ore() {
         this.itemID = ItemID.COPPER_ORE;
         this.levelRequirement = 0;
-        this.xpAmountGiven  = 17;
+        this.xpAmountGiven = 17;
     }
 }

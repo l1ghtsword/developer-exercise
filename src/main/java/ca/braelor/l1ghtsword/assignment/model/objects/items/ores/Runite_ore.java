@@ -8,6 +8,6 @@ public class Runite_ore extends ItemData {
     public Runite_ore() {
         this.itemID = ItemID.TIN_ORE;
         this.levelRequirement = 85;
-        this.xpAmountGiven  = 125;
+        this.xpAmountGiven = 125;
     }
 }

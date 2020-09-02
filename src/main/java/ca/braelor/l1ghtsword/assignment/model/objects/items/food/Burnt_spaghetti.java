@@ -6,7 +6,7 @@ import ca.braelor.l1ghtsword.assignment.model.objects.FoodItem;
 public class Burnt_spaghetti extends FoodItem {
 
     public Burnt_spaghetti() {
-        this.itemID=ItemID.BURNT_SPAGHETTI;
+        this.itemID = ItemID.BURNT_SPAGHETTI;
         this.imUsable = false;
     }
 }

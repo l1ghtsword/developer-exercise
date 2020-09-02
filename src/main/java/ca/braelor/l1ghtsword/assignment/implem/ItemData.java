@@ -4,7 +4,6 @@ import ca.braelor.l1ghtsword.assignment.exception.*;
 import ca.braelor.l1ghtsword.assignment.interfaces.Item;
 import ca.braelor.l1ghtsword.assignment.model.enums.ItemID;
 import ca.braelor.l1ghtsword.assignment.model.objects.items.Empty;
-import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -18,7 +17,6 @@ import static net.gameslabs.model.objects.Assignment.log;
 
 public class ItemData implements Item {
 
-    protected String className;
     protected ItemID itemID;
     protected int itemQuantity;
     protected int cookBurnChance;
@@ -33,7 +31,7 @@ public class ItemData implements Item {
 
     public ItemData() {
         this.itemQuantity = 1;
-        this.onUseProperties="";
+        this.onUseProperties = "";
     }
 
     public ItemID getItemID() {
@@ -44,38 +42,34 @@ public class ItemData implements Item {
         return this.itemQuantity;
     }
 
+    /*Set Quantity can, in special cases, be 0 (This should never occur with actual player Items in inventory)
+    Only is cases where an Item object is being used for an event to accurately represent variables.
+     */
     public void setQuantity(int newQuantity) {
-        if (newQuantity > 0) {
-            this.itemQuantity = newQuantity;
-        } else if (newQuantity == 0) {
-            throw new CannotBeZeroError();
-        } else {
+        if (newQuantity < 0) {
             throw new NegativeValueError();
         }
+        this.itemQuantity = newQuantity;
     }
 
     public void addQuantity(int newQuantity) {
         if (newQuantity > 0) {
-            if (((long) this.itemQuantity + (long) newQuantity) <= Integer.MAX_VALUE) {
-                this.itemQuantity += newQuantity;
-            } else {
-                throw new AdditionError();
-            }
-        } else {
             throw new NegativeValueError();
         }
+        if (((long) this.itemQuantity + (long) newQuantity) > Integer.MAX_VALUE) {
+            throw new AdditionError();
+        }
+        this.itemQuantity += newQuantity;
     }
 
     public void subQuantity(int newQuantity) {
-        if (newQuantity > 0) {
-            if ((this.itemQuantity - newQuantity) >= 1) {
-                this.itemQuantity -= newQuantity;
-            } else {
-                throw new SubtractionError();
-            }
-        } else {
+        if (newQuantity <= 0) {
             throw new NegativeValueError();
         }
+        if ((this.itemQuantity - newQuantity) < 1) {
+            throw new SubtractionError();
+        }
+        this.itemQuantity -= newQuantity;
     }
 
     public int getBurnChance() {
@@ -98,7 +92,9 @@ public class ItemData implements Item {
         return this.xpAmountGiven;
     }
 
-    public String getUseProperties() { return this.onUseProperties; }
+    public String getUseProperties() {
+        return this.onUseProperties;
+    }
 
     public boolean isStackable() {
         return this.imStackable;
@@ -112,7 +108,21 @@ public class ItemData implements Item {
         return this.imCookable;
     }
 
+    public Item createNewInstanceOf(Item item) {
+        return instanceGenerator(item.getClass().getName());
+    }
+
+    //Doesn't work, unable to get fully qualified Class name in this manner,
+    @Deprecated
+    public Item createNewInstanceOf(ItemID itemID) {
+        String itemClassName = itemID.toString();
+        return instanceGenerator(itemClassName.substring(0, 1) + itemClassName.substring(1).toLowerCase());
+    }
+
+
     /*
+    Private method used to actually create the object based on the method used to create a new instance
+
     Clearly i did not come up with on my own... stacktrace reference here https://stackoverflow.com/questions/7495785/java-how-to-instantiate-a-class-from-string
     I needed a way to on the fly create a object instance of ItemData subclasses on the fly, but was stuck with initialization errors as i cant know the correct subclass.
 
@@ -127,28 +137,17 @@ public class ItemData implements Item {
 
     This broke quite a bit initially, i had to refactor it a few times to get everything correct... Im really glad i got this working, but im sure it could be better.
      */
-    public Item createNewInstanceOf(Item item) {
-        return instanceGenerator(item.getClass().getName());
-    }
-
-    //Doesn't work, unable to get fully qualified Class name in this manner,
-    @Deprecated public Item createNewInstanceOf(ItemID itemID) {
-        String itemClassName = itemID.toString();
-        return instanceGenerator(itemClassName.substring(0, 1)+itemClassName.substring(1).toLowerCase());
-    }
-
-    private Item instanceGenerator(String nameOfClass){
+    private Item instanceGenerator(String nameOfClass) {
         try {
             //Use reflection to get the class from the existing class name as a string
-            Class thisClass = Class.forName(nameOfClass);
+            Class<?> thisClass = Class.forName(nameOfClass);
             //Create the constructor using the Class String and the assembled types
-            Constructor constructor = thisClass.getConstructor();
+            Constructor<?> constructor = thisClass.getConstructor();
             //get Object parameters to feed to the constructor when initializing the new object
             Object[] parameters = thisClass.getTypeParameters();
             //gib's Item cast object we created
             return (Item) constructor.newInstance(parameters);
-        }
-        catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException error) {
+        } catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException error) {
             log("Bad thing habbon :( \n" + error.getMessage() + "\n");
             error.printStackTrace();
             log("\n\n");

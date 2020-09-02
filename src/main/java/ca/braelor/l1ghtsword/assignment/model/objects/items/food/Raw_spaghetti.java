@@ -6,7 +6,7 @@ import ca.braelor.l1ghtsword.assignment.model.objects.FoodItem;
 public class Raw_spaghetti extends FoodItem {
 
     public Raw_spaghetti() {
-        this.itemID=ItemID.RAW_SPAGHETTI;
+        this.itemID = ItemID.RAW_SPAGHETTI;
         this.cookBurnChance = 55;
         this.itemOnCookSuccess = new Spaghetti();
         this.itemOnCookFail = new Burnt_spaghetti();

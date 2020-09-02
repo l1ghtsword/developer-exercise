@@ -1,6 +1,5 @@
 package ca.braelor.l1ghtsword.assignment.events;
 
-import ca.braelor.l1ghtsword.assignment.interfaces.Item;
 import ca.braelor.l1ghtsword.assignment.model.enums.Rock;
 import net.gameslabs.api.Player;
 import net.gameslabs.api.PlayerEvent;

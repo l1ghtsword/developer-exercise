@@ -10,13 +10,14 @@ import net.gameslabs.events.GiveXpEvent;
 import net.gameslabs.model.enums.Skill;
 
 import java.util.concurrent.ThreadLocalRandom;
+
 import static net.gameslabs.model.objects.Assignment.log;
 
 /**
  * REFACTORED
- *
+ * <p>
  * Removed any deprecated, hard coded logic in place of the Item interface.
- *
+ * <p>
  * Will attempt to cook, cookable food.
  * Will check if player has item, then if item is cookable, then if player has correct level.
  * if all checks are good, will cook the food, and return a cooked or burnt item as a result.
@@ -24,42 +25,45 @@ import static net.gameslabs.model.objects.Assignment.log;
 
 public class CookingComponent extends Component {
 
-    public CookingComponent() {
-
-    }
-
     @Override
     public void onLoad() {
         registerEvent(PlayerCookingEvent.class, this::onPlayerCooking);
     }
 
     private void onPlayerCooking(PlayerCookingEvent event) {
+        Item foodBeingCooked = event.getItem();
+        GetPlayerItemEvent getItemFromPlayer = new GetPlayerItemEvent(event.getPlayer(), event.getItem());
+        GetPlayerLevelEvent pLevel;
 
-        GetPlayerItemEvent getItem = new GetPlayerItemEvent(event.getPlayer(), event.getItem());
-        send(getItem);
-
-        if (getItem.hasItem()) {
-            if (event.getItem().isCookable()) {
-                Item foodBeingCooked = event.getItem();
-                GetPlayerLevelEvent pLevel = new GetPlayerLevelEvent(event.getPlayer(), Skill.COOKING);
-                send(pLevel);
-
-                try {
-                    if (pLevel.getLevel() >= foodBeingCooked.getLevelRequirement()) {
-                        log(event.getPlayer().getName() + " has high enough level, Attempting to cook " + event.getItemID());
-                        attemptToCookFood(event.getPlayer(), event.getItem());
-                    } else {
-                        throw new PlayerLevelTooLow(event.getPlayer(), Skill.COOKING, foodBeingCooked.getLevelRequirement());
-                    }
-                } catch (PlayerLevelTooLow err) {
-                    log(err.getMessage());
-                }
-            } else {
-                log("Cannot cook " + event.getItemID() + ". Only able to cook food...");
-            }
-        } else {
+        send(getItemFromPlayer);
+        if (!getItemFromPlayer.hasItem()) {
             log(event.getPlayer().getName() + "Does not have any " + event.getItemID() + "!");
+            getItemFromPlayer.setCancelled(true);
+            event.setCancelled(true);
+            return;
         }
+
+        if (!foodBeingCooked.isCookable()) {
+            log("Cannot cook " + event.getItemID() + ". Only able to cook food...");
+            event.setCancelled(true);
+            return;
+        }
+
+        pLevel = new GetPlayerLevelEvent(event.getPlayer(), Skill.COOKING);
+        send(pLevel);
+
+        try {
+            if (pLevel.getLevel() < foodBeingCooked.getLevelRequirement()) {
+                throw new PlayerLevelTooLow(event.getPlayer(), Skill.COOKING, foodBeingCooked.getLevelRequirement());
+            }
+        } catch (PlayerLevelTooLow err) {
+            log(err.getMessage());
+        }
+
+        log(event.getPlayer().getName() + " has high enough level, Attempting to cook " + event.getItemID());
+        attemptToCookFood(event.getPlayer(), foodBeingCooked);
+        getItemFromPlayer.setCancelled(true);
+        pLevel.setCancelled(true);
         event.setCancelled(true);
     }
 
@@ -81,6 +85,6 @@ public class CookingComponent extends Component {
 
     @Override
     public void onUnload() {
-        // Nothing to do
+
     }
 }

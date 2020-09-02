@@ -8,6 +8,6 @@ public class Mithril_ore extends ItemData {
     public Mithril_ore() {
         this.itemID = ItemID.TIN_ORE;
         this.levelRequirement = 55;
-        this.xpAmountGiven  = 80;
+        this.xpAmountGiven = 80;
     }
 }

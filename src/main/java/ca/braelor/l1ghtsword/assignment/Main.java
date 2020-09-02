@@ -11,11 +11,11 @@ public class Main {
 
     public static void main(String[] args) {
         new Assignment(
-            new MyXPBoosterComponent(),
-            new ChartComponent(),
-            new InventoryComponent(),
-            new MiningComponent(),
-            new CookingComponent()
+                new MyXPBoosterComponent(),
+                new ChartComponent(),
+                new InventoryComponent(),
+                new MiningComponent(),
+                new CookingComponent()
         ).run();
     }
 }

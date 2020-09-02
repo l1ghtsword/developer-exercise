@@ -1,4 +1,5 @@
 package ca.braelor.l1ghtsword.assignment.interfaces;
+
 import ca.braelor.l1ghtsword.assignment.model.enums.ItemID;
 
 public interface Item {
@@ -31,7 +32,8 @@ public interface Item {
 
     boolean isCookable();
 
-    Item createNewInstanceOf (Item item);
+    Item createNewInstanceOf(Item item);
 
-    @Deprecated Item createNewInstanceOf (ItemID item);
+    @Deprecated
+    Item createNewInstanceOf(ItemID item);
 }

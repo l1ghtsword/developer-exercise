@@ -8,6 +8,6 @@ public class Gold_ore extends ItemData {
     public Gold_ore() {
         this.itemID = ItemID.TIN_ORE;
         this.levelRequirement = 40;
-        this.xpAmountGiven  = 65;
+        this.xpAmountGiven = 65;
     }
 }

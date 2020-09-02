@@ -6,7 +6,7 @@ import ca.braelor.l1ghtsword.assignment.model.objects.FoodItem;
 public class Chicken extends FoodItem {
 
     public Chicken() {
-        this.itemID=ItemID.CHICKEN;
+        this.itemID = ItemID.CHICKEN;
         this.onUseProperties = "60 HP restored!";
     }
 }

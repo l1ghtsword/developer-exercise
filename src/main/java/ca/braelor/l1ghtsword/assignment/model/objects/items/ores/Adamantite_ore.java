@@ -8,6 +8,6 @@ public class Adamantite_ore extends ItemData {
     public Adamantite_ore() {
         this.itemID = ItemID.TIN_ORE;
         this.levelRequirement = 70;
-        this.xpAmountGiven  = 95;
+        this.xpAmountGiven = 95;
     }
 }

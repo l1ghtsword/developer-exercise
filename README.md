@@ -1,3 +1,17 @@
+#Revision
+This branch is a refactor of the original assignment submitted in the master branch.
+This program implements a factory design pattern that is central to item management.
+I have also spent time reviewing area's i could improve code quality, specifically 
+in the <b> Cooking Skill Component.</b>
+
+- Nested Else If logic has been removed in many areas
+- The use of OOL concepts such as inheritance and polymorphism has been implemented
+- All Skills have been refactored to disallow any hard coded constructors assigning values
+- All "Item" objects inherit the createInstanceOf method which allows items to reference 
+themselves or other Item objects to create a new instance of the selected object dynamically
+without knowing its class before runtime.
+
+
 # Developer l1ghtsword
 Welcome to the GamesLabs developer assignment. The goal of this assignment is to test your ability to use :
 - git
@@ -115,7 +129,7 @@ This will send a GetItemEvent to confirm mainPlayer has 1000 coins somewhere in 
 - **if (getLevel(mainPlayer, Skill.MINING) != 6)**<br>
 This will confirm the mainPlayer has level 6 Mining by sending a GetPlayerLevelEvent to check.<br><br>
 
-- **if (!hasItem(mainPlayer, Item.SHRIMP) || hasItem(mainPlayer, Item.BURNT_SHRIMP) )**<br>
+- **hasItem(mainPlayer, Item.BURNT_SHRIMP) )**<br>
 This check CAN fail, as it depends on a 10% burn chance of shrimp. It will tell you to run the application again if you are unlucky... <br><br>
 
 

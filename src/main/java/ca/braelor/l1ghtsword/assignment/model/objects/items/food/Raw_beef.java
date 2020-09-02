@@ -6,7 +6,7 @@ import ca.braelor.l1ghtsword.assignment.model.objects.FoodItem;
 public class Raw_beef extends FoodItem {
 
     public Raw_beef() {
-        this.itemID=ItemID.RAW_BEEF;
+        this.itemID = ItemID.RAW_BEEF;
         this.cookBurnChance = 40;
         this.itemOnCookSuccess = new Beef();
         this.itemOnCookFail = new Burnt_beef();

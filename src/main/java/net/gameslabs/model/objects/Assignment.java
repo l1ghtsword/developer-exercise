@@ -103,8 +103,8 @@ public class Assignment {
         log(mainPlayer.getName()+" is using (eating) "+ raw_spaghetti.getItemID());
         UsePlayerItemEvent useItemEvent = new UsePlayerItemEvent(mainPlayer, raw_spaghetti);
         registry.sendEvent(useItemEvent);
-        log(mainPlayer.getName()+" has "+getItem(mainPlayer, new Shrimp())+" "+ ItemID.SHRIMP);
-        log(mainPlayer.getName()+" has "+getItem(mainPlayer, new Burnt_shrimp())+" "+ ItemID.BURNT_SHRIMP);
+        log(mainPlayer.getName()+" has "+getItem(mainPlayer, new Shrimp()).getQuantity()+" "+ ItemID.SHRIMP);
+        log(mainPlayer.getName()+" has "+getItem(mainPlayer, new Burnt_shrimp()).getQuantity()+" "+ ItemID.BURNT_SHRIMP);
 
         //Run those condition checks
         runChecks();
@@ -119,7 +119,7 @@ public class Assignment {
         if (getLevel(mainPlayer, Skill.CONSTRUCTION) != 2) throw new AssignmentFailed("Construction XP should be set to level 2");
         if (getItem(someOtherPlayer, new Coins()).getQuantity() != 1000) throw new AssignmentFailed("Player does not have 1000 coins in their inventory");
         if (getLevel(mainPlayer, Skill.MINING) != 6) throw new AssignmentFailed("Mining XP should be set to level 6");
-        if (!hasItem(mainPlayer, new Shrimp()) || hasItem(mainPlayer, new Burnt_shrimp()) ) { throw new AssignmentFailed(mainPlayer.getName()+" burnt the Shrimp!!! run this again!"); }
+        if (hasItem(mainPlayer, new Burnt_shrimp()) ) { throw new AssignmentFailed(mainPlayer.getName()+" burnt the Shrimp!!! run this again!"); }
     }
 
     //Create event to get player level for specified skill

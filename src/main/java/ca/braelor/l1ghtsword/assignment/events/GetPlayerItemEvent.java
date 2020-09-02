@@ -28,24 +28,28 @@ public class GetPlayerItemEvent extends PlayerEvent {
         return this.item;
     }
 
-    public void setItem(Item collectedItem) {
-        this.item = collectedItem;
-    }
-
     public ItemID getItemID() {
         return this.item.getItemID();
     }
 
-    public int getTotalQuantity() {
+    public int getItemQuantity() {
         return this.item.getQuantity();
     }
 
-    public void setTotalQuantity(int totalInventoryItemAmount) {
-        this.totalInventoryItemAmount = totalInventoryItemAmount;
+    public int getTotalQuantity() {
+        return this.totalInventoryItemAmount;
     }
 
     public boolean hasItem() {
         return this.hasItem;
+    }
+
+    public void setItem(Item collectedItem) {
+        this.item = collectedItem;
+    }
+
+    public void setTotalQuantity(int totalInventoryItemCount) {
+        this.totalInventoryItemAmount = totalInventoryItemCount;
     }
 
     public void setHasItem(boolean doesPlayerHaveItem) {
